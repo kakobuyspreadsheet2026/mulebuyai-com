@@ -100,7 +100,27 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
 </form>
 
 <script is:inline define:vars={{ searchAction }}>
-  document.addEventListener('DOMContentLoaded', () => {
+  function mlOpenCatalogSearch(url) {
+    const w = window.open(url, '_blank', 'noopener,noreferrer');
+    if (w) {
+      try {
+        w.opener = null;
+      } catch (_) {
+        /* ignore */
+      }
+      return;
+    }
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  (function mlBindMaisonLooksSearchBars() {
     document.querySelectorAll('form.ml-search-bar').forEach((form) => {
       if (form.dataset.mlSearchNavigate) return;
       form.dataset.mlSearchNavigate = '1';
@@ -120,9 +140,7 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
           if (form.dataset.mlSearchOpening === '1') return;
           form.dataset.mlSearchOpening = '1';
           const url = `${searchAction}?q=${encodeURIComponent(q)}`;
-          const tab = window.open(url, '_blank', 'noopener,noreferrer');
-          if (tab) tab.opener = null;
-          else window.location.assign(url);
+          mlOpenCatalogSearch(url);
           window.setTimeout(() => {
             form.dataset.mlSearchOpening = '0';
           }, 1200);
@@ -130,7 +148,7 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
         true,
       );
     });
-  });
+  })();
 </script>
 
 <style>
