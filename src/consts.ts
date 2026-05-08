@@ -15,7 +15,7 @@ export const siteName = 'Mulebuy Spreadsheet Hub';
  * Append to favicon URLs in `<head>` whenever `public/favicon.png` / `public/favicon.ico` change.
  * Browsers and CDNs cache favicons aggressively without this.
  */
-export const faviconCacheBust = '?v=mulebuy-20260509';
+export const faviconCacheBust = '?v=mulebuy-purple-official';
 
 /** Full-width PC top carousel strip — mirrored under `public/images/mulebuy-promo/`. */
 export const mulebuyTopBannerImageUrl = '/images/mulebuy-promo/top-banner.png';
