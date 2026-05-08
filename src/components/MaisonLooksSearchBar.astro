@@ -99,14 +99,14 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
 
 <script is:inline define:vars={{ searchAction }}>
   function mlOpenCatalogSearchInNewTab(url) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const w = window.open(url, '_blank', 'noopener,noreferrer');
+    if (w) {
+      try {
+        w.opener = null;
+      } catch (_) {
+        /* ignore */
+      }
+    }
   }
 
   (function mlBindMaisonLooksSearchBars() {
