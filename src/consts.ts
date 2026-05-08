@@ -4,7 +4,7 @@ export const ml = 'https://maisonlooks.com/en';
 export const mlSpreadsheetMulebuy = `${ml}/spreadsheet/mulebuy`;
 
 /**
- * Google `SearchAction` template — matches `MaisonLooksSearchBar` (`method="get"`, `name="q"` → `/search?q=`).
+ * Google `SearchAction` template — matches catalogue search URLs (`/search?q=`).
  */
 export const mlSpreadsheetMulebuySearchTemplate = `${mlSpreadsheetMulebuy.replace(/\/$/, '')}/search?q={search_term_string}`;
 

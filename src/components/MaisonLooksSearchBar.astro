@@ -37,14 +37,13 @@ const camera = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" v
 const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>`;
 ---
 
-<form
+<div
   class:list={[
     'ml-search-bar',
     kbHero && 'ml-search-bar--kb-hero',
     purpleSubmit && 'ml-search-bar--kb-hero-purple',
   ]}
-  action={searchAction}
-  method="get"
+  data-ml-search-bar
   role="search"
   aria-label={ariaLabel}
 >
@@ -63,7 +62,6 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
         autocomplete="off"
         enterkeyhint="search"
         maxlength="2048"
-        required
       />
       <span class="ml-search-bar__divider" aria-hidden="true"></span>
       <a
@@ -78,7 +76,7 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
         <span class="ml-search-bar__by-image-text">{searchByImageLabel}</span>
       </a>
     </div>
-    <button type="submit" class="ml-search-bar__submit" aria-label={searchSubmitLabel}>
+    <button type="button" class="ml-search-bar__submit" aria-label={searchSubmitLabel}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18"
@@ -97,19 +95,10 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
       <span class="ml-search-bar__submit-text" aria-hidden="true">{searchSubmitLabel}</span>
     </button>
   </div>
-</form>
+</div>
 
 <script is:inline define:vars={{ searchAction }}>
-  function mlOpenCatalogSearch(url) {
-    const w = window.open(url, '_blank', 'noopener,noreferrer');
-    if (w) {
-      try {
-        w.opener = null;
-      } catch (_) {
-        /* ignore */
-      }
-      return;
-    }
+  function mlOpenCatalogSearchInNewTab(url) {
     const a = document.createElement('a');
     a.href = url;
     a.target = '_blank';
@@ -117,36 +106,40 @@ const leadSearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="22" heigh
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    a.remove();
+    document.body.removeChild(a);
   }
 
   (function mlBindMaisonLooksSearchBars() {
-    document.querySelectorAll('form.ml-search-bar').forEach((form) => {
-      if (form.dataset.mlSearchNavigate) return;
-      form.dataset.mlSearchNavigate = '1';
-      form.addEventListener(
-        'submit',
-        (e) => {
-          const input = form.querySelector('input[name="q"]');
-          const raw = input && 'value' in input ? String(input.value) : '';
-          const q = raw.trim();
-          if (!q) {
-            e.preventDefault();
-            if (input instanceof HTMLElement) input.focus();
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          if (form.dataset.mlSearchOpening === '1') return;
-          form.dataset.mlSearchOpening = '1';
-          const url = `${searchAction}?q=${encodeURIComponent(q)}`;
-          mlOpenCatalogSearch(url);
-          window.setTimeout(() => {
-            form.dataset.mlSearchOpening = '0';
-          }, 1200);
-        },
-        true,
-      );
+    document.querySelectorAll('[data-ml-search-bar]').forEach((root) => {
+      if (!(root instanceof HTMLElement)) return;
+      if (root.dataset.mlSearchBound === '1') return;
+      root.dataset.mlSearchBound = '1';
+
+      const input = root.querySelector('input.ml-search-bar__input');
+      const btn = root.querySelector('button.ml-search-bar__submit');
+      if (!(input instanceof HTMLInputElement) || !(btn instanceof HTMLButtonElement)) return;
+
+      function runSearch() {
+        const q = String(input.value).trim();
+        if (!q) {
+          input.focus();
+          return;
+        }
+        if (root.dataset.mlSearchOpening === '1') return;
+        root.dataset.mlSearchOpening = '1';
+        const url = `${searchAction}?q=${encodeURIComponent(q)}`;
+        mlOpenCatalogSearchInNewTab(url);
+        window.setTimeout(() => {
+          root.dataset.mlSearchOpening = '0';
+        }, 1200);
+      }
+
+      btn.addEventListener('click', runSearch);
+      input.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        runSearch();
+      });
     });
   })();
 </script>
