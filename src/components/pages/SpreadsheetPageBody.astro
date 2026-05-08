@@ -1,0 +1,491 @@
+---
+import SiteHeader from '../SiteHeader.astro';
+import SiteFooter from '../SiteFooter.astro';
+import type { SpreadsheetPageCopy } from '../../i18n/copy/spreadsheetPage';
+
+interface Props {
+  locale: string;
+  copy: SpreadsheetPageCopy;
+  homeHref: string;
+  howToHref: string;
+  newsHref: string;
+  sheetUrl: string;
+}
+
+const { locale, copy, homeHref, howToHref, newsHref, sheetUrl } = Astro.props;
+---
+
+<SiteHeader locale={locale} />
+
+<main class="ssp-main-centered">
+  <section class="band-alt ssp-hero">
+    <div class="wrap">
+      <div class="page-mast">
+        <p class="ssp-back">
+          <a href={homeHref}>{copy.backHomeLabel}</a>
+        </p>
+        <h1 class="simple-page-title">{copy.h1}</h1>
+        <p class="ssp-h2">{copy.h2Hero}</p>
+        <p class="section-intro ssp-subhead">{copy.subhead}</p>
+
+        <ul class="ssp-tag-row" aria-label="Highlights">
+          {copy.heroTags.map((t) => <li class="ssp-tag">{t}</li>)}
+        </ul>
+
+        <p class="section-intro ssp-intro" set:html={copy.introHtml} />
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href={sheetUrl} target="_blank" rel="noopener noreferrer">
+            {copy.ctaLabel}
+          </a>
+          <a class="btn btn-ghost" href={howToHref}>{copy.howToBuyLabel}</a>
+          <a class="btn btn-ghost" href={newsHref}>{copy.newsLinkLabel}</a>
+        </div>
+
+        <p class="ssp-learn-wrap">
+          <a class="ssp-learn-link" href="#ssp-what">{copy.learnMoreLabel}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ssp-section" id="ssp-what" aria-labelledby="ssp-what-heading">
+    <div class="wrap">
+      <h2 id="ssp-what-heading" class="ssp-block-title">{copy.whatIsTitle}</h2>
+      <div class="ssp-prose" set:html={copy.whatIsBodyHtml} />
+    </div>
+  </section>
+
+  <section class="band-alt ssp-section" id="ssp-preview" aria-labelledby="ssp-preview-heading">
+    <div class="wrap">
+      <h2 id="ssp-preview-heading" class="ssp-block-title">{copy.previewTitle}</h2>
+      <p class="section-intro ssp-prose-tight" set:html={copy.previewIntroHtml} />
+      <p class="ssp-filters">
+        <strong>{copy.previewFiltersLabel}</strong>
+        <span class="ssp-filters-line">
+          {copy.previewCards.map((c) => c.category).filter((v, i, a) => a.indexOf(v) === i).join(' · ')}
+        </span>
+      </p>
+      <div class="ssp-card-grid">
+        {
+          copy.previewCards.map((c) => (
+            <article class="ssp-card">
+              <h3 class="ssp-card-title">{c.title}</h3>
+              <p class="ssp-card-meta">
+                <span class="ssp-card-cat">{c.category}</span>
+                <span class="ssp-card-price">{c.priceHint}</span>
+              </p>
+              <p class="ssp-card-tags">{c.tagsLine}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="ssp-section" id="ssp-why" aria-labelledby="ssp-why-heading">
+    <div class="wrap">
+      <h2 id="ssp-why-heading" class="ssp-block-title">{copy.whyTitle}</h2>
+      <ul class="ssp-why-grid">
+        {
+          copy.whyItems.map((item) => (
+            <li class="ssp-why-item">
+              <h3 class="ssp-why-h">{item.title}</h3>
+              <p class="ssp-why-body">{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="band-alt ssp-section" id="ssp-how" aria-labelledby="ssp-how-heading">
+    <div class="wrap">
+      <h2 id="ssp-how-heading" class="ssp-block-title">{copy.howTitle}</h2>
+      <ol class="ssp-steps">
+        {
+          copy.howSteps.map((step) => (
+            <li class="ssp-step">
+              <h3 class="ssp-step-title">{step.title}</h3>
+              <p class="ssp-step-body">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="ssp-section" id="ssp-faq" aria-labelledby="ssp-faq-heading">
+    <div class="wrap">
+      <h2 id="ssp-faq-heading" class="ssp-block-title">{copy.faqTitle}</h2>
+      <div class="ssp-faq-stack">
+        {
+          copy.faqs.map((item) => (
+            <details class="ssp-faq-item">
+              <summary class="ssp-faq-summary">{item.q}</summary>
+              <div class="ssp-faq-body" set:html={item.aHtml} />
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="band-alt ssp-section ssp-bottom" aria-labelledby="ssp-bottom-heading">
+    <div class="wrap">
+      <h2 id="ssp-bottom-heading" class="ssp-block-title">{copy.bottomCtaTitle}</h2>
+      <p class="section-intro ssp-prose-tight" set:html={copy.bottomCtaIntroHtml} />
+      <div class="cta-row">
+        <a class="btn btn-primary" href={sheetUrl} target="_blank" rel="noopener noreferrer">
+          {copy.ctaLabel}
+        </a>
+        <a class="btn btn-ghost" href={howToHref}>{copy.howToBuyLabel}</a>
+      </div>
+
+      <section class="ssp-bullets-block" aria-labelledby="ssp-bullets-heading">
+        <h3 id="ssp-bullets-heading" class="ssp-bullets-title">{copy.bulletsTitle}</h3>
+        <ul class="ssp-bullets">
+          {copy.bullets.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+    </div>
+  </section>
+</main>
+
+<SiteFooter />
+
+<style>
+  .ssp-main-centered .wrap {
+    text-align: center;
+  }
+
+  .ssp-main-centered .cta-row {
+    justify-content: center;
+  }
+
+  .ssp-hero .page-mast {
+    max-width: 54rem;
+    margin-inline: auto;
+  }
+
+  .ssp-back {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .ssp-h2 {
+    margin: 0.35rem 0 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .ssp-subhead {
+    margin-top: 0.65rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .ssp-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    list-style: none;
+    margin: 1.1rem auto 0;
+    padding: 0;
+    max-width: 52rem;
+    justify-content: center;
+  }
+
+  .ssp-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.28rem 0.62rem;
+    border-radius: 999px;
+    background: rgba(255, 30, 111, 0.07);
+    color: var(--text);
+    border: 1px solid rgba(255, 30, 111, 0.15);
+  }
+
+  .ssp-intro {
+    margin-top: 1rem;
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .ssp-learn-wrap {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  .ssp-learn-link {
+    font-weight: 600;
+    color: var(--oob-pink, #ff1e6f);
+    text-decoration: none;
+  }
+
+  .ssp-learn-link:hover {
+    text-decoration: underline;
+  }
+
+  .ssp-section {
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .ssp-block-title {
+    margin: 0 auto 0.85rem;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .ssp-prose {
+    max-width: 48rem;
+    margin-inline: auto;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .ssp-prose :global(a) {
+    color: var(--oob-pink, #ff1e6f);
+    font-weight: 600;
+  }
+
+  .ssp-prose-tight {
+    max-width: 48rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    margin-inline: auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .ssp-prose-tight :global(a) {
+    color: var(--oob-pink, #ff1e6f);
+    font-weight: 600;
+  }
+
+  .ssp-faq-body :global(a) {
+    color: var(--oob-pink, #ff1e6f);
+    font-weight: 600;
+  }
+
+  .ssp-filters {
+    margin: 0 auto 1.25rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    max-width: 48rem;
+  }
+
+  .ssp-filters-line {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .ssp-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 960px) {
+    .ssp-card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .ssp-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ssp-card {
+    margin: 0;
+    padding: 0.95rem 1rem;
+    border-radius: 0.55rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    min-width: 0;
+    text-align: center;
+  }
+
+  .ssp-card-title {
+    margin: 0 0 0.45rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .ssp-card-meta {
+    margin: 0 0 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.65rem;
+    justify-content: center;
+  }
+
+  .ssp-card-price {
+    color: var(--accent-dark, #0f766e);
+  }
+
+  .ssp-card-tags {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .ssp-why-grid {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 1.25rem;
+    max-width: 52rem;
+  }
+
+  @media (max-width: 720px) {
+    .ssp-why-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ssp-why-item {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .ssp-why-h {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .ssp-why-body {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .ssp-steps {
+    margin: 0 auto;
+    padding-left: 0;
+    max-width: 48rem;
+    list-style: none;
+    counter-reset: ssp-num;
+  }
+
+  .ssp-step {
+    margin-bottom: 1.1rem;
+    padding-left: 0;
+    text-align: center;
+    counter-increment: ssp-num;
+  }
+
+  .ssp-step-title::before {
+    content: counter(ssp-num) '. ';
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ssp-step:last-child {
+    margin-bottom: 0;
+  }
+
+  .ssp-step-title {
+    margin: 0 0 0.3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .ssp-step-body {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .ssp-faq-stack {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .ssp-faq-item {
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.45rem;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .ssp-faq-summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.65rem 0.85rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .ssp-faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ssp-faq-body {
+    padding: 0 0.85rem 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.55rem;
+    text-align: center;
+  }
+
+  .ssp-bottom .cta-row {
+    margin-top: 0.5rem;
+  }
+
+  .ssp-bullets-block {
+    margin: 2rem auto 0;
+    max-width: 44rem;
+  }
+
+  .ssp-bullets-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 0.65rem;
+    color: var(--text);
+  }
+
+  .ssp-bullets {
+    margin: 0;
+    padding-left: 0;
+    list-style-position: inside;
+    font-size: 0.89rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  .ssp-bullets li {
+    margin-bottom: 0.4rem;
+  }
+</style>

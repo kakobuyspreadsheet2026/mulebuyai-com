@@ -1,0 +1,163 @@
+---
+import SiteHeader from '../SiteHeader.astro';
+import SiteFooter from '../SiteFooter.astro';
+import RedditBuyerSharesBlock, {
+  type RedditSharePick,
+} from '../RedditBuyerSharesBlock.astro';
+import type { BuyerSharesCopy } from '../../i18n/copy/buyerShares';
+
+interface Props {
+  locale: string;
+  copy: BuyerSharesCopy;
+  homeHref: string;
+  buyerPicks: RedditSharePick[];
+  shippingPicks: RedditSharePick[];
+  galleryI18nJson: string;
+}
+
+const { locale, copy, homeHref, buyerPicks, shippingPicks, galleryI18nJson } =
+  Astro.props;
+
+/** Newest-first by `addedAt` (YYYY-MM-DD); missing dates sort last */
+function sharesByAddedAtDesc(items: RedditSharePick[]): RedditSharePick[] {
+  return [...items].sort((a, b) =>
+    (b.addedAt ?? '').localeCompare(a.addedAt ?? ''),
+  );
+}
+
+const buyerPicksSorted = sharesByAddedAtDesc(buyerPicks);
+const shippingPicksSorted = sharesByAddedAtDesc(shippingPicks);
+
+const hasAnyShare =
+  buyerPicksSorted.length > 0 || shippingPicksSorted.length > 0;
+---
+
+<SiteHeader locale={locale} />
+
+<script type="application/json" id="buyer-shares-gallery-i18n" set:html={galleryI18nJson} />
+
+<main>
+  <section class="band-alt">
+    <div class="wrap">
+      <div class="page-mast">
+        <p class="buyer-share-back-link">
+          <a href={homeHref}>{copy.backHomeLabel}</a>
+        </p>
+        <h1 class="simple-page-title" id="buyer-shares-heading">{copy.h1}</h1>
+        <p class="section-intro buyer-share-lead" set:html={copy.leadHtml} />
+
+        {
+          !hasAnyShare ? (
+            <RedditBuyerSharesBlock picks={[]} showEmptyMessage />
+          ) : (
+            <div class="buyer-shares-blocks">
+              {buyerPicksSorted.length > 0 ? (
+                <RedditBuyerSharesBlock picks={buyerPicksSorted} />
+              ) : null}
+              {shippingPicksSorted.length > 0 ? (
+                <RedditBuyerSharesBlock picks={shippingPicksSorted} variant="shipping" />
+              ) : null}
+            </div>
+          )
+        }
+
+        <p class="section-intro buyer-share-foot" set:html={copy.disclaimerHtml} />
+      </div>
+    </div>
+  </section>
+</main>
+
+<SiteFooter />
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const cfgEl = document.getElementById('buyer-shares-gallery-i18n');
+    let cfg = null;
+    if (cfgEl?.textContent) {
+      try {
+        cfg = JSON.parse(cfgEl.textContent);
+      } catch {
+        cfg = null;
+      }
+    }
+    const fallback = {
+      buyerKind: 'buyer haul',
+      shippingKind: 'shipping timeline',
+      defaultBase: 'Mulebuy Spreadsheet · Reddit digest',
+      altPattern: 'Mulebuy Spreadsheet · Reddit {kind} — {title} — photo {i} of {n}',
+    };
+    const I18N = cfg && cfg.buyerKind ? cfg : fallback;
+
+    function galleryAlt(kind, title, photoIndexOneBased, photoCount) {
+      const head = title.length > 72 ? `${title.slice(0, 69).trimEnd()}…` : title;
+      const base = head || I18N.defaultBase;
+      return I18N.altPattern
+        .replace(/\{kind\}/g, kind)
+        .replace(/\{title\}/g, base)
+        .replace(/\{i\}/g, String(photoIndexOneBased))
+        .replace(/\{n\}/g, String(photoCount));
+    }
+
+    document.querySelectorAll('.reddit-gallery').forEach((root) => {
+      const raw = root.getAttribute('data-reddit-gallery-urls');
+      if (!raw) return;
+      let urls;
+      try {
+        urls = JSON.parse(raw);
+      } catch {
+        return;
+      }
+      if (!Array.isArray(urls) || !urls.length) return;
+
+      const img = root.querySelector('.reddit-gallery-img');
+      const prev = root.querySelector('.reddit-gallery-nav--prev');
+      const next = root.querySelector('.reddit-gallery-nav--next');
+      const dots = root.querySelectorAll('.reddit-gallery-dot');
+      if (!img || !prev || !next) return;
+
+      let i = 0;
+      const n = urls.length;
+
+      function show(idx) {
+        i = ((idx % n) + n) % n;
+        img.src = urls[i];
+        const shareTitle = root.getAttribute('data-share-title') || '';
+        const isShip = Boolean(root.closest('.reddit-picks--shipping'));
+        const kind = isShip ? I18N.shippingKind : I18N.buyerKind;
+        img.alt = galleryAlt(kind, shareTitle, i + 1, n);
+        dots.forEach((d, di) => {
+          d.classList.toggle('is-active', di === i);
+          d.setAttribute('aria-selected', di === i ? 'true' : 'false');
+        });
+      }
+
+      prev.addEventListener('click', () => show(i - 1));
+      next.addEventListener('click', () => show(i + 1));
+      dots.forEach((d, di) => d.addEventListener('click', () => show(di)));
+      show(0);
+    });
+  });
+</script>
+
+<style>
+  .buyer-share-back-link {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .buyer-share-lead {
+    margin-top: 0;
+  }
+
+  .buyer-share-foot {
+    margin: 2rem 0 0;
+  }
+
+  .buyer-shares-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
+    width: 100%;
+  }
+</style>

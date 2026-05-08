@@ -1,0 +1,33 @@
+---
+import BlogArticleShell from '../../../components/BlogArticleShell.astro';
+
+export const prerender = true;
+
+const canonicalPath = '/blog/mulebuy-taobao';
+const publishedISO = '2026-05-03';
+---
+
+<BlogArticleShell
+  title="Taobao variant grids before Mulebuy paste | mulebuyai.com"
+  description="Lock colour/size matrices on Taobao/Tmall-class listings so Spreadsheet curiosity converts into matching warehouse pulls."
+  canonicalPath={canonicalPath}
+  headline="Taobao detail pages: locking variants before paste"
+  publishedISO={publishedISO}
+  displayDate="3 May 2026"
+>
+  <p class="blog-lede" slot="lede">
+    Taobao listings expose dense selector grids—easy to screenshot, painful when agents purchase the wrong intersect. Spreadsheet rows rarely encode every permutation; <strong>your Mulebuy intake must mirror the literal matrix you inspected</strong>.
+  </p>
+
+  <h2>Stable URL hygiene</h2>
+  <ul>
+    <li>Favour item-detail permalinks over shop-wide searches.</li>
+    <li>Avoid translator wrappers that strip SKUs.</li>
+    <li>Reload after toggling variants to confirm persistence.</li>
+  </ul>
+
+  <h2>Hidden bundles & multi-piece SKUs</h2>
+  <p>
+    Some listings nest socks, charms, or secondary garments inside one SKU card. Note accessory clauses before approving domestic spend—they inflate QC complexity downstream.
+  </p>
+</BlogArticleShell>

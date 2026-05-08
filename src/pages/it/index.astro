@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LocaleHomeStub from '../../components/LocaleHomeStub.astro';
+import { itHome } from '../../i18n/stubs/it';
+import { canonicalHref, ml, siteStructuredDataIds } from '../../consts';
+
+export const prerender = true;
+
+const locale = 'it';
+const canonicalPath = '/it/';
+const origin = Astro.site?.origin ?? 'https://mulebuyai.com';
+const { websiteId } = siteStructuredDataIds(origin);
+const pageUrl = canonicalHref(Astro.site, canonicalPath);
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
+  name: itHome.webPageName,
+  url: pageUrl,
+  description: itHome.description,
+  inLanguage: 'it',
+  isPartOf: { '@id': websiteId },
+  keywords: itHome.webPageKeywords,
+};
+---
+
+<Layout
+  locale={locale}
+  title={itHome.title}
+  description={itHome.description}
+  canonicalPath={canonicalPath}
+  i18nRouteSegment=""
+  jsonLd={webPageLd}
+  showDiscordTopBanner={false}
+>
+  <LocaleHomeStub content={itHome} />
+</Layout>

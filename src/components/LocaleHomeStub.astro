@@ -1,0 +1,185 @@
+---
+import MulebuyHomeHero from './MulebuyHomeHero.astro';
+import HomeHowItWorks from './HomeHowItWorks.astro';
+import SiteFooter from './SiteFooter.astro';
+import { defaultCommunityRedditUrl, ml } from '../consts';
+import type { HomeStubContent } from '../i18n/types';
+import { withMulebuySpreadsheetAlt } from '../lib/withMulebuySpreadsheetAlt';
+
+interface Props {
+  content: HomeStubContent;
+}
+
+const { content: c } = Astro.props;
+
+const locale = Astro.currentLocale ?? 'en';
+
+const redditHref = defaultCommunityRedditUrl;
+
+const CAT_ICON: Record<string, string> = {
+  shoes: '/category-icons/cat-shoes.png',
+  't-shirts': '/category-icons/cat-t-shirts.png',
+  pants: '/category-icons/cat-pants.png',
+  accessories: '/category-icons/cat-accessories.png',
+  bags: '/category-icons/cat-bags.png',
+  electronics: '/category-icons/cat-electronics.png',
+  jackets: '/category-icons/cat-jackets.png',
+  hoodies: '/category-icons/cat-hoodies.png',
+  headwear: '/category-icons/cat-headwear.png',
+  jersey: '/category-icons/cat-jersey.png',
+  perfume: '/category-icons/cat-perfume.png',
+  other: '/category-icons/cat-other.png',
+};
+
+const browseMlRoot = ml.replace(/\/$/, '');
+---
+
+<MulebuyHomeHero locale={locale} />
+
+<main class="home-main-centered">
+  <section id="curated-directory" class="band-alt category-explore" aria-labelledby="explore-heading">
+    <div class="wrap">
+      <div class="page-mast">
+        <h2 id="explore-heading" class="category-explore-title">{c.exploreTitle}</h2>
+        <div class="cat-icon-grid" role="navigation" aria-label={c.categoriesAria}>
+          {
+            c.categoryPills.map((cat, ci) => (
+              <a
+                class="cat-icon-link"
+                href={`${browseMlRoot}${cat.path}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${cat.label} — opens catalogue browse`}
+              >
+                <img
+                  class="cat-icon-img"
+                  src={CAT_ICON[cat.id]}
+                  alt={withMulebuySpreadsheetAlt(cat.imgAlt)}
+                  width="84"
+                  height="84"
+                  loading={ci < 6 ? 'eager' : 'lazy'}
+                  fetchpriority={ci < 2 ? 'high' : undefined}
+                  decoding="async"
+                />
+                <span class="cat-icon-label">{cat.label}</span>
+              </a>
+            ))
+          }
+        </div>
+        <div class="category-below-icon">
+          <a class="category-below-icon-link" href={redditHref} target="_blank" rel="noopener noreferrer" aria-label={c.redditAria}>
+            <img
+              class="category-below-icon-img"
+              src="/reddit-snoo.png"
+              width="52"
+              height="52"
+              alt={withMulebuySpreadsheetAlt(c.redditSnooAlt)}
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        </div>
+        <p class="category-explore-kicker">
+          {c.exploreKickerLead}
+          <a href="https://mulebuy.com/" target="_blank" rel="noopener noreferrer">Mulebuy</a>
+          {c.exploreKickerTrail}
+        </p>
+        <p class="category-explore-intro">{c.exploreIntro}</p>
+        <p class="category-explore-sub">{c.exploreSub}</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="intro-heading">
+    <div class="wrap">
+      <div class="page-mast">
+        <h2 id="intro-heading">{c.introH2}</h2>
+        <p class="section-intro">{c.introP}</p>
+      </div>
+    </div>
+  </section>
+
+  <HomeHowItWorks />
+
+  <section class="band-alt guide" aria-labelledby="guide-heading" id="mulebuy-spreadsheet-guide">
+    <div class="wrap">
+      <div class="page-mast">
+        <h2 id="guide-heading">{c.guideH2}</h2>
+        <p class="section-intro">{c.guideIntro}</p>
+        {
+          c.sections.map((sec) => (
+            <div class="guide-block-stub">
+              <h3>{sec.h3}</h3>
+              {sec.paragraphs.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="spreadsheet" class="band-alt" aria-labelledby="cta-heading">
+    <div class="wrap">
+      <div class="page-mast">
+        <h2 id="cta-heading">{c.ctaHeading}</h2>
+        <p class="section-intro">
+          {c.ctaIntro}{' — '}
+          <a href={`${browseMlRoot}/spreadsheet/mulebuy`} target="_blank" rel="noopener noreferrer">
+            {c.sheetLinkLabel}
+          </a>
+          {c.ctaIntroSuffix ?? ''}
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href={browseMlRoot} target="_blank" rel="noopener noreferrer">{c.hero.ctaBrowse}</a>
+          <a class="btn btn-ghost" href="https://mulebuy.com/" target="_blank" rel="noopener noreferrer">
+            {c.hero.ctaLogin}
+          </a>
+        </div>
+        <p class="section-intro" style="margin-top:1rem;">
+          {c.ctaFooterNote}
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<SiteFooter
+  disclaimerTitle={c.footer.disclaimerLabel}
+  disclaimerHtml={c.footer.disclaimerHtml}
+  copyrightLine={c.footer.copyrightLine}
+/>
+
+<style>
+  .home-main-centered .wrap {
+    text-align: center;
+  }
+  .home-main-centered h2 {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 52rem;
+  }
+  .home-main-centered .section-intro {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-main-centered .guide h3 {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 52rem;
+  }
+  .home-main-centered .guide p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .home-main-centered .cta-row {
+    justify-content: center;
+  }
+
+  .home-main-centered .guide h3 + p + p {
+    margin-top: 0.65rem;
+  }
+
+  /* exploreKicker splitter may leave dangling text — keep simple underline link */
+</style>

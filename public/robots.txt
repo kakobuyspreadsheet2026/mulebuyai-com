@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /news-openstar/
+
+Sitemap: https://mulebuyai.com/sitemap-index.xml

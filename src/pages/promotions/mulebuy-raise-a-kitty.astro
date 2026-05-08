@@ -1,0 +1,141 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import event from '../../data/mulebuyRaiseAKittyEvent.json';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { breadcrumbListLd, localeHomePath } from '../../lib/seo';
+import { canonicalHref, siteStructuredDataIds } from '../../consts';
+import { HTML_LANG_BY_ROUTE } from '../../i18n/config';
+
+export const prerender = true;
+
+const locale = 'en';
+const canonicalPath = '/promotions/mulebuy-raise-a-kitty';
+const homeHref = getRelativeLocaleUrl(locale, '');
+const origin = Astro.site?.origin ?? 'https://mulebuyai.com';
+
+const description =
+  'Full mirrored copy of Mulebuy’s Raise A Kitty event (May 2026): prizes, participation steps, app-only rules — editorial reference on mulebuyai.com; checkout stays on mulebuy.com.';
+
+const { websiteId } = siteStructuredDataIds(origin);
+const pageUrl = canonicalHref(Astro.site, canonicalPath);
+const promoShareImage = new URL('/promotions/mulebuy-raise-a-kitty-hero.png', Astro.site).href;
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
+  name: event.title,
+  url: pageUrl,
+  description,
+  image: [promoShareImage],
+  inLanguage: HTML_LANG_BY_ROUTE.en,
+  isPartOf: { '@id': websiteId },
+};
+
+const breadcrumbLd = breadcrumbListLd(Astro.site, [
+  { name: 'Home', path: localeHomePath(locale) },
+  { name: event.title.length > 88 ? event.title.slice(0, 85) + '…' : event.title, path: canonicalPath },
+]);
+
+---
+
+<Layout
+  title={`${event.title} · Mulebuy Spreadsheet`}
+  description={description}
+  canonicalPath={canonicalPath}
+  locale={locale}
+  hreflangLocales={[]}
+  ogType="article"
+  articlePublishedTime={event.publishedISO}
+  articleModifiedTime={event.publishedISO}
+  jsonLd={[webPageLd, breadcrumbLd]}
+>
+  <SiteHeader locale={locale} />
+
+  <main>
+    <section class="band-alt">
+      <div class="wrap">
+        <div class="page-mast">
+          <p class="promo-back">
+            <a href={homeHref}>← Home</a>
+          </p>
+          <h1 class="simple-page-title">{event.title}</h1>
+          <p class="promo-meta">
+            <span>{event.sourceNote}</span>
+            {' · '}
+            <span>{event.publishedDisplay}</span>
+            {' · '}
+            <a href={event.sourceUrl} target="_blank" rel="noopener noreferrer">Mulebuy ↗</a>
+          </p>
+
+          <article class="official-sample promo-sample">
+            <div class="official-faq-html mulebuy-event-body" set:html={event.bodyHtml} />
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .promo-back {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+  .promo-meta {
+    margin: 0 0 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .promo-sample {
+    margin: 0;
+    padding: 1.35rem 1.25rem 1.5rem;
+    max-width: 52rem;
+    min-width: 0;
+    background: linear-gradient(180deg, var(--hero-surface-2, #f9f9fc) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    border-left: 4px solid var(--accent);
+    text-align: left;
+  }
+  .official-faq-html {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--muted);
+    min-width: 0;
+  }
+  .mulebuy-event-body :global(.detail-img),
+  .mulebuy-event-body :global(.mulebuy-event-hero) {
+    display: block;
+    width: 100%;
+    max-width: 36rem;
+    height: auto;
+    margin: 0 auto 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+  }
+  .official-faq-html :where(p, ul, ol) {
+    margin: 0 0 0.55rem;
+  }
+  .official-faq-html :where(ul, ol) {
+    padding-left: 1.35rem;
+  }
+  .official-faq-html :where(li) {
+    margin-bottom: 0.35rem;
+  }
+  .official-faq-html :where(strong, b) {
+    color: var(--text);
+  }
+  .official-faq-html :where(code) {
+    font-size: 0.875em;
+    font-weight: 700;
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+    background: rgba(15, 23, 42, 0.06);
+  }
+</style>

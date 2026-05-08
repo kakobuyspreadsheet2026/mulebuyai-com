@@ -1,0 +1,1129 @@
+---
+import SiteHeader from './SiteHeader.astro';
+import MaisonLooksSearchBar from './MaisonLooksSearchBar.astro';
+import MulebuyFullWidthTopBanner from './MulebuyFullWidthTopBanner.astro';
+import {
+  mulebuyHomeBentoCarouselSlides,
+  mulebuyHomeBentoMiddleBottomLeftPngUrl,
+  mulebuyHomeBentoMiddleBottomRightPngUrl,
+  mulebuyHomeBentoMiddleTopGifUrl,
+  mulebuyHomeBentoRightRailImageUrl,
+  mulebuyGlobalCreatorsProgramHref,
+  mulebuyHomeHeroBannerUrl,
+  ml,
+  mlSpreadsheetMulebuy,
+  maisonlooksDiscordInviteUrl,
+} from '../consts';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { withMulebuySpreadsheetAlt } from '../lib/withMulebuySpreadsheetAlt';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale: localeProp } = Astro.props;
+const locale =
+  typeof localeProp === 'string' && localeProp.length > 0
+    ? localeProp
+    : (Astro.currentLocale ?? 'en');
+
+const newsHref = getRelativeLocaleUrl(locale, 'news');
+const howToHref = getRelativeLocaleUrl(locale, 'how-to-buy');
+
+function isOutboundCarouselHref(href: string) {
+  return /^https?:\/\//i.test(href.trim());
+}
+
+const heroBg = JSON.stringify(mulebuyHomeHeroBannerUrl);
+---
+
+<section id="top" class="mai-shell" aria-label="Mulebuy Spreadsheet hub hero">
+  <MulebuyFullWidthTopBanner highFetchPriority />
+
+  <div
+    id="hero"
+    class="mai-hero"
+    style={`--mai-hero-bg: url(${heroBg})`}
+    role="img"
+    aria-label={withMulebuySpreadsheetAlt(
+      'Hero illustration styled after Mulebuy.com homepage photography — editorial Spreadsheet companion',
+    )}
+  >
+    <div class="mai-hero__shade" aria-hidden="true"></div>
+    <div class="mai-hero__mast wrap">
+      <SiteHeader embedded heroDarkShell locale={locale} />
+    </div>
+    <div class="mai-hero__inner wrap">
+      <h1 class="mai-hero__h1">
+        <span class="mai-hero__line">Mulebuy Spreadsheet hub · 2026</span>
+        <span class="mai-hero__tagline">A faster Mulebuy Spreadsheet browse lane</span>
+        <span class="mai-hero__meta">
+          2026 · 10k+ vetted picks · standout batches · Taobao · Weidian · 1688
+        </span>
+      </h1>
+      <p class="mai-hero__lead">
+        Spreadsheet-style catalogue with{' '}
+        <strong class="mai-hero__lead-strong">10,000+ SKUs</strong>,{' '}
+        <strong class="mai-hero__lead-strong">QC imagery</strong> wherever sellers attach it, USD-facing pricing, and deep storefront links across{' '}
+        <strong class="mai-hero__lead-strong">Taobao, Weidian &amp; 1688</strong>. Watch momentum shift batch-by-batch, line up notes from rows you trust,
+        then check out on{' '}
+        <a class="mai-hero__inline" href="https://mulebuy.com/" target="_blank" rel="noopener noreferrer">Mulebuy</a>
+        {' '}for warehouse QC snapshots—built for agents who live in spreadsheets. We never hold your wallet or process payments here.
+      </p>
+
+      <MaisonLooksSearchBar
+        mlBase={ml}
+        variant="mulebuyHero"
+        submitTone="purple"
+      />
+
+      <div class="mai-hero__quick">
+        <a
+          class="mai-chip"
+          href={`${ml.replace(/\/$/, '')}/search?q=${encodeURIComponent('best sellers')}`}
+          target="_blank"
+          rel="noopener noreferrer">Best sellers → catalogue</a
+        >
+        <a class="mai-chip mai-chip--ghost" href={mlSpreadsheetMulebuy} target="_blank" rel="noopener noreferrer">
+          Open Mulebuy Spreadsheet →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mai-ticker" role="region" aria-label="Site notices">
+    <div class="wrap mai-ticker__inner">
+      <span class="mai-ticker__label">
+        <span class="mai-ticker__icon" aria-hidden="true">📣</span>
+        NOTICES
+      </span>
+      <p class="mai-ticker__msg">
+        Bind Discord perks inside live <strong>Mulebuy</strong> flows — read ribbons &amp; mirrored excerpts on{' '}
+        <a href={newsHref}>News &amp; guides</a>.
+      </p>
+      <a class="mai-ticker__more" href={newsHref}>View more →</a>
+    </div>
+  </div>
+
+  <div class="mai-bento-wrap">
+    <div class="wrap mai-bento" aria-label="Featured hubs">
+      <div
+        class="mai-carousel mai-tile mai-tile--tall"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Mulebuy featured promotions"
+        data-mai-carousel
+      >
+        <div class="mai-carousel__viewport">
+          {
+            mulebuyHomeBentoCarouselSlides.map((slide, index) => (
+              <a
+                class:list={['mai-carousel__slide', index === 0 && 'is-active']}
+                href={slide.href}
+                target={isOutboundCarouselHref(slide.href) ? '_blank' : undefined}
+                rel={isOutboundCarouselHref(slide.href) ? 'noopener noreferrer' : undefined}
+                data-carousel-slide={index}
+                tabindex={index === 0 ? 0 : -1}
+                aria-hidden={index === 0 ? 'false' : 'true'}
+              >
+                <img
+                  class="mai-carousel__img"
+                  src={slide.imageUrl}
+                  alt={withMulebuySpreadsheetAlt(slide.alt)}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  referrerpolicy="no-referrer"
+                />
+              </a>
+            ))
+          }
+        </div>
+        <div class="mai-carousel__dots" role="group" aria-label="Carousel slides">
+          {
+            mulebuyHomeBentoCarouselSlides.map((_, index) => (
+              <button
+                type="button"
+                class:list={['mai-carousel__dot', index === 0 && 'is-active']}
+                data-carousel-dot={index}
+                aria-label={`Go to promotion slide ${index + 1}`}
+                aria-current={index === 0 ? 'true' : undefined}
+              />
+            ))
+          }
+        </div>
+      </div>
+      <div class="mai-bento-middle" aria-label="Mulebuy homepage-style promo column">
+        <a
+          class="mai-ad-card mai-bento-middle__top"
+          href={maisonlooksDiscordInviteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            class="mai-ad-card__media"
+            src={mulebuyHomeBentoMiddleTopGifUrl}
+            alt={withMulebuySpreadsheetAlt(
+              'Discord community promotion — opens Maison Looks invite',
+            )}
+            loading="eager"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+        </a>
+        <div class="mai-bento-middle__pair">
+          <a
+            class="mai-ad-card mai-ad-card--half"
+            href={ml}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              class="mai-ad-card__media"
+              src={mulebuyHomeBentoMiddleBottomLeftPngUrl}
+              alt={withMulebuySpreadsheetAlt('Maison Looks homepage — opens maisonlooks.com')}
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+            />
+          </a>
+          <a class="mai-ad-card mai-ad-card--half" href={howToHref}>
+            <img
+              class="mai-ad-card__media"
+              src={mulebuyHomeBentoMiddleBottomRightPngUrl}
+              alt={withMulebuySpreadsheetAlt(
+                'How to buy — on-site guide (opens this hub)',
+              )}
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+            />
+          </a>
+        </div>
+      </div>
+      <a
+        class="mai-tile mai-tile--rail-tall mai-ad-card mai-rail-promo"
+        href={mulebuyGlobalCreatorsProgramHref}
+        aria-label="Global Creators Program — full mirrored activity on this hub"
+      >
+        <div class="mai-rail-promo__wrap">
+          <img
+            class="mai-ad-card__media mai-ad-card__media--rail"
+            src={mulebuyHomeBentoRightRailImageUrl}
+            alt={withMulebuySpreadsheetAlt(
+              'Global Creators Program promotional artwork — mirrored on this hub',
+            )}
+            loading="eager"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+          <div class="mai-rail-promo__caption">
+            <span class="mai-rail-promo__kicker">Creators</span>
+            <span class="mai-rail-promo__title">Global Creators Program</span>
+            <span class="mai-rail-promo__hint">
+              Up to $30/video · payouts on Mulebuy · full brief →
+            </span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initMaiCarousels() {
+    document.querySelectorAll('[data-mai-carousel]').forEach((root) => {
+      if (!(root instanceof HTMLElement)) return;
+      if (root.dataset.maiCarouselBound === '1') return;
+      root.dataset.maiCarouselBound = '1';
+
+      const slides = [...root.querySelectorAll('[data-carousel-slide]')];
+      const dots = [...root.querySelectorAll('[data-carousel-dot]')];
+      if (slides.length === 0) return;
+
+      let index = 0;
+      let timer = 0;
+      const reduceMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const show = (n) => {
+        const next = ((n % slides.length) + slides.length) % slides.length;
+        slides.forEach((el, j) => {
+          const on = j === next;
+          el.classList.toggle('is-active', on);
+          el.setAttribute('aria-hidden', on ? 'false' : 'true');
+          if (el instanceof HTMLElement) el.tabIndex = on ? 0 : -1;
+        });
+        dots.forEach((d, j) => {
+          const on = j === next;
+          d.classList.toggle('is-active', on);
+          if (on) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+        index = next;
+      };
+
+      const stop = () => {
+        if (timer) window.clearInterval(timer);
+        timer = 0;
+      };
+
+      const start = () => {
+        stop();
+        if (!reduceMotion && slides.length > 1) {
+          timer = window.setInterval(() => show(index + 1), 5200);
+        }
+      };
+
+      dots.forEach((d, j) => {
+        d.addEventListener('click', () => {
+          show(j);
+          start();
+        });
+      });
+
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+
+      [...root.querySelectorAll('[data-carousel-slide]')].forEach((el) => {
+        el.classList.remove('is-active');
+        el.setAttribute('aria-hidden', 'true');
+        if (el instanceof HTMLElement) el.tabIndex = -1;
+      });
+      [...root.querySelectorAll('[data-carousel-dot]')].forEach((d) => {
+        d.classList.remove('is-active');
+        d.removeAttribute('aria-current');
+      });
+
+      show(0);
+      start();
+    });
+  }
+
+  initMaiCarousels();
+  document.addEventListener('astro:page-load', initMaiCarousels);
+</script>
+
+<style>
+  .mai-shell {
+    margin: 0;
+    padding: 0;
+    font-family: Inter, system-ui, sans-serif;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /*
+   * Desktop: mirror dock gutter both sides for optical centering.
+   * Use ~3rem (not 4rem) so the grid reads closer to mulebuy.com PC width — less “skinny column”.
+   */
+  @media (min-width: 960px) {
+    .mai-shell .wrap {
+      padding-left: max(
+        var(--page-gutter-x),
+        calc(env(safe-area-inset-left, 0px) + 3rem)
+      );
+      padding-right: max(
+        var(--page-gutter-x),
+        calc(env(safe-area-inset-right, 0px) + 3rem)
+      );
+    }
+  }
+
+  /* Horizontal inset: base gutters from global Layout `.wrap`; shell adds symmetric dock band ≥960px */
+  .mai-hero__mast {
+    position: relative;
+    z-index: 2;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .mai-hero__mast :global(.oob-site-header--embedded) {
+    margin-bottom: 0;
+  }
+
+  .mai-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: clamp(20rem, 52vmin, 34rem);
+    background-color: #453a58;
+    /* Fewer stacked layers = sharper photo; single soft key + light footer scrim */
+    background-image: linear-gradient(
+        180deg,
+        rgba(18, 12, 38, 0) 0%,
+        rgba(10, 8, 22, 0.06) 48%,
+        rgba(6, 4, 16, 0.3) 100%
+      ),
+      radial-gradient(
+        ellipse 82% 62% at 68% 26%,
+        rgba(255, 195, 155, 0.2) 0%,
+        transparent 56%
+      ),
+      var(--mai-hero-bg);
+    background-size:
+      100% 100%,
+      100% 100%,
+      cover;
+    background-position:
+      center,
+      center,
+      /* Keep right-side character art inside the crop. */
+      right center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    color: #fff;
+    /* Less top padding: mast carries nav + safe-area */
+    padding: 0 0 clamp(2rem, 5vw, 3rem);
+  }
+
+  /*
+   * Phones: calm gradient hero — no hotlinked plane/mascot JPEG crop wars.
+   */
+  @media (max-width: 640px) {
+    .mai-hero {
+      background-color: #353047;
+      background-image:
+        radial-gradient(
+          ellipse 115% 72% at 18% 12%,
+          rgba(255, 252, 248, 0.18) 0%,
+          transparent 58%
+        ),
+        radial-gradient(
+          ellipse 70% 55% at 92% 72%,
+          rgba(167, 139, 250, 0.22) 0%,
+          transparent 58%
+        ),
+        linear-gradient(168deg, #2a2636 0%, #38314a 42%, #453d5c 100%);
+      background-size: 100% 100%, 100% 100%, 100% 100%;
+      background-position: center, center, center;
+      min-height: clamp(17.5rem, 58vmin, 30rem);
+      padding-bottom: clamp(1.5rem, 5vw, 2.25rem);
+    }
+  }
+
+  .mai-hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 115% 52% at 50% -18%, rgba(255, 252, 246, 0.26) 0%, transparent 58%);
+    background-size: 100% 100%;
+  }
+
+  .mai-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: min(62rem, 100%);
+    margin-inline: auto;
+    padding-top: clamp(0.65rem, 2vw, 1.25rem);
+  }
+
+  .mai-hero__h1 {
+    margin: 0 0 0.85rem;
+    max-width: 46rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .mai-hero__line {
+    display: block;
+    font-size: clamp(1.85rem, 5vw, 3rem);
+    text-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.92),
+      0 2px 22px rgba(0, 0, 0, 0.55);
+  }
+
+  .mai-hero__tagline {
+    display: block;
+    margin-top: 0.55rem;
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.88),
+      0 2px 18px rgba(0, 0, 0, 0.48);
+  }
+
+  .mai-hero__meta {
+    display: block;
+    margin-top: 0.55rem;
+    font-size: clamp(0.72rem, 1.55vw, 0.82rem);
+    font-weight: 650;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.88),
+      0 2px 14px rgba(0, 0, 0, 0.42);
+  }
+
+  .mai-hero__lead {
+    margin: 0 0 1.25rem;
+    max-width: 40rem;
+    font-size: clamp(0.92rem, 1.9vw, 1.06rem);
+    font-weight: 560;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.97);
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.82),
+      0 2px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .mai-hero__lead-strong {
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .mai-hero__inline {
+    color: #ffa033;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-thickness: 0.11em;
+    text-underline-offset: 0.14em;
+  }
+
+  .mai-hero__inline:hover {
+    color: #ffc266;
+  }
+
+  .mai-hero__quick {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+    margin-top: 0.15rem;
+  }
+
+  .mai-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42rem 1rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+  }
+
+  .mai-chip:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .mai-chip--ghost {
+    background: rgba(12, 8, 28, 0.35);
+    border-color: rgba(255, 180, 120, 0.55);
+  }
+
+  .mai-hero :global(.ml-search-bar) {
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .mai-ticker {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mai-ticker__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
+    padding: 0.62rem 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .mai-ticker__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    color: #5b21b6;
+  }
+
+  .mai-ticker__msg {
+    margin: 0;
+    flex: 1;
+    min-width: min(100%, 14rem);
+    line-height: 1.45;
+    color: rgba(30, 27, 46, 0.88);
+  }
+
+  .mai-ticker__msg a {
+    color: #6d28d9;
+    font-weight: 750;
+  }
+
+  .mai-ticker__more {
+    flex-shrink: 0;
+    font-weight: 750;
+    color: #6d28d9;
+    text-decoration: none;
+  }
+
+  .mai-ticker__more:hover {
+    text-decoration: underline;
+  }
+
+  .mai-bento-wrap {
+    padding: clamp(1.25rem, 3vw, 1.85rem) 0 clamp(1.5rem, 3.5vw, 2.25rem);
+    background: #fff;
+  }
+
+  /* Left carousel slimmer; middle + rail pick up width — rail cover less harsh */
+  .mai-bento {
+    display: grid;
+    grid-template-columns: minmax(0, 3.35fr) minmax(0, 3.4fr) minmax(0, 2.15fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(14px, 1.15vw, 18px);
+    align-items: stretch;
+    background: #fff;
+  }
+
+  /* Shared promo cards — rounded shells like mulebuy.com bento */
+  .mai-ad-card {
+    border-radius: 0.875rem;
+    overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow:
+      0 10px 28px rgba(36, 24, 74, 0.08),
+      0 2px 8px rgba(36, 24, 74, 0.04);
+    transition:
+      transform 0.15s ease,
+      filter 0.15s ease;
+    text-decoration: none;
+    color: inherit;
+    background: #f4f2fb;
+  }
+
+  .mai-ad-card:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+  }
+
+  .mai-ad-card:focus-visible {
+    outline: 2px solid rgba(129, 140, 248, 0.95);
+    outline-offset: 2px;
+  }
+
+  /* Anchor crop to top so headline / CTA art isn’t eaten by cover */
+  .mai-ad-card__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* Middle column: top ~45% / bottom ~55% */
+  .mai-bento-middle {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(14px, 1.15vw, 18px);
+    min-width: 0;
+    min-height: 0;
+    align-self: stretch;
+  }
+
+  .mai-bento-middle__top {
+    flex: 9 1 0%;
+    min-height: 11.25rem;
+    display: block;
+    line-height: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Middle promos: cover + focal bias (no contain / no lavender bands) */
+  .mai-bento-middle__top .mai-ad-card__media {
+    min-height: 100%;
+    aspect-ratio: unset;
+    object-fit: cover;
+    object-position: center 38%;
+  }
+
+  .mai-bento-middle__pair {
+    flex: 11 1 0%;
+    min-height: 12.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(14px, 1.15vw, 18px);
+  }
+
+  .mai-ad-card--half {
+    display: block;
+    min-height: 0;
+    height: 100%;
+    line-height: 0;
+  }
+
+  .mai-ad-card--half .mai-ad-card__media {
+    object-position: center 38%;
+  }
+
+  .mai-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    min-height: 7.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 750;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 14px 38px rgba(36, 24, 74, 0.14);
+    transition:
+      transform 0.15s ease,
+      filter 0.15s ease;
+  }
+
+  .mai-tile:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+  }
+
+  /* Image-only rail — overrides padded `.mai-tile` shell */
+  /* Tall rail — heights tuned vs viewport width so columns feel less narrow/tall */
+  .mai-tile--rail-tall.mai-ad-card {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    display: block;
+    padding: 0;
+    min-height: clamp(21rem, 40vmin, 30rem);
+    align-self: stretch;
+    border-radius: 0.875rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow:
+      0 10px 28px rgba(36, 24, 74, 0.08),
+      0 2px 8px rgba(36, 24, 74, 0.04);
+  }
+
+  .mai-ad-card__media--rail {
+    min-height: clamp(21rem, 40vmin, 30rem);
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+
+  .mai-rail-promo__wrap {
+    position: relative;
+    display: block;
+    height: 100%;
+    min-height: inherit;
+    overflow: hidden;
+  }
+
+  .mai-rail-promo__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2rem 0.72rem 0.62rem;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(15, 23, 42, 0.22) 42%,
+      rgba(15, 23, 42, 0.88) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    pointer-events: none;
+  }
+
+  .mai-rail-promo__kicker {
+    font-size: 0.56rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 248, 240, 0.92);
+  }
+
+  .mai-rail-promo__title {
+    font-size: clamp(0.74rem, 1.5vw, 0.88rem);
+    font-weight: 850;
+    line-height: 1.22;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  }
+
+  .mai-rail-promo__hint {
+    font-size: 0.58rem;
+    font-weight: 650;
+    line-height: 1.32;
+    color: rgba(255, 252, 248, 0.9);
+  }
+
+  .mai-tile--tall:not(.mai-carousel) {
+    grid-row: span 2;
+    min-height: 16rem;
+    background:
+      radial-gradient(ellipse 90% 70% at 20% 20%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
+      linear-gradient(155deg, #7c3aed 0%, #4c1d95 48%, #312e81 100%);
+  }
+
+  /* Left bento — tall carousel like mulebuy.com PC central column */
+  .mai-carousel.mai-tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-height: clamp(21rem, 40vmin, 30rem);
+    background: #faf8ff;
+    border-radius: 0.875rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow:
+      0 10px 28px rgba(36, 24, 74, 0.08),
+      0 2px 8px rgba(36, 24, 74, 0.04);
+  }
+
+  .mai-carousel__viewport {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: clamp(17.5rem, 36vmin, 27rem);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .mai-carousel__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.55s ease,
+      visibility 0.55s ease;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .mai-carousel__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+    pointer-events: auto;
+  }
+
+  .mai-carousel__slide:focus-visible {
+    outline: 2px solid rgba(253, 224, 71, 0.95);
+    outline-offset: -2px;
+  }
+
+  .mai-carousel__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Stronger left anchor — edge headlines / badges stay in frame under cover */
+    object-position: 28% 38%;
+    display: block;
+  }
+
+  /* Promo slides: copy/badge bias left — keep in frame when viewport is tall (same focal intent as slide 0). */
+  .mai-carousel__slide:is([data-carousel-slide='0'], [data-carousel-slide='1'], [data-carousel-slide='2'])
+    .mai-carousel__img {
+    object-position: left 40%;
+  }
+
+  /* Pagination: anchored to `.mai-carousel.mai-tile` (dots are a sibling of the viewport). */
+  .mai-carousel__dots {
+    position: absolute;
+    bottom: 0.62rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.42rem;
+    z-index: 6;
+    margin: 0;
+    padding: 0.38rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 14px rgba(15, 23, 42, 0.12);
+    pointer-events: auto;
+  }
+
+  .mai-carousel__dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(91, 33, 182, 0.35);
+    cursor: pointer;
+    transition:
+      width 0.22s ease,
+      background 0.22s ease;
+  }
+
+  .mai-carousel__dot:hover {
+    background: rgba(91, 33, 182, 0.55);
+  }
+
+  .mai-carousel__dot.is-active {
+    width: 1.35rem;
+    background: rgba(91, 33, 182, 0.92);
+  }
+
+  .mai-carousel__dot:focus-visible {
+    outline: 2px solid rgba(253, 224, 71, 0.95);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mai-carousel__slide {
+      transition: none;
+    }
+  }
+
+  .mai-tile--discord {
+    background: linear-gradient(135deg, #ec4899 0%, #a855f7 52%, #6366f1 100%);
+  }
+
+  .mai-tile--reddit {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 45%, #c2410c 100%);
+  }
+
+  .mai-tile--dim {
+    background: linear-gradient(145deg, #312448 0%, #1e1433 60%, #120c22 100%);
+    min-height: 6.75rem;
+  }
+
+  @media (max-width: 900px) {
+    .mai-bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+    }
+
+    .mai-carousel.mai-tile {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: clamp(14.5rem, 72vw, 19.5rem);
+    }
+
+    .mai-carousel__viewport {
+      min-height: clamp(12.5rem, 62vw, 17rem);
+    }
+
+    .mai-bento-middle {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: clamp(18rem, 88vw, 24rem);
+    }
+
+    .mai-bento-middle__top {
+      min-height: clamp(8.5rem, 42vw, 11rem);
+    }
+
+    .mai-bento-middle__pair {
+      min-height: clamp(8rem, 40vw, 10.5rem);
+    }
+
+    .mai-tile--rail-tall.mai-ad-card {
+      grid-column: 1;
+      grid-row: auto;
+      min-height: clamp(14rem, 68vw, 18rem);
+    }
+
+    .mai-ad-card__media--rail {
+      min-height: clamp(14rem, 68vw, 18rem);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .mai-bento {
+      grid-template-columns: 1fr;
+    }
+
+    .mai-bento-middle__pair {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .mai-ad-card--half {
+      min-height: clamp(7.5rem, 52vw, 10rem);
+    }
+  }
+
+  /*
+   * Phones: activity strip edge-to-edge (centered in viewport), imagery cover-filled — no letterboxing.
+   * Carousel dots stay below the viewport so slides stay visually full. Bottom padding clears the dock.
+   */
+  @media (max-width: 640px) {
+    .mai-bento-wrap {
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      box-sizing: border-box;
+      padding-top: 0.65rem;
+      padding-right: max(var(--page-gutter-x, 14px), env(safe-area-inset-right, 0px));
+      padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+      padding-left: max(var(--page-gutter-x, 14px), env(safe-area-inset-left, 0px));
+      overflow-x: clip;
+      background: #fff;
+    }
+
+    .mai-bento-wrap > .mai-bento.wrap {
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
+      padding-inline: 0;
+      gap: 10px;
+      justify-items: stretch;
+    }
+
+    .mai-carousel.mai-tile {
+      min-height: unset;
+      gap: 0.45rem;
+      padding-bottom: 0.2rem;
+      width: 100%;
+      justify-self: stretch;
+    }
+
+    .mai-carousel__viewport {
+      flex: 0 0 auto;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      min-height: min(78vw, 21rem);
+      max-height: none;
+    }
+
+    .mai-carousel__dots {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      margin-inline: auto;
+      align-self: center;
+    }
+
+    .mai-carousel__img {
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .mai-carousel__slide:is([data-carousel-slide='0'], [data-carousel-slide='1'], [data-carousel-slide='2'])
+      .mai-carousel__img {
+      object-position: left 42%;
+    }
+
+    .mai-bento-middle {
+      min-height: unset;
+      gap: 10px;
+      width: 100%;
+      justify-self: stretch;
+    }
+
+    .mai-bento-middle__top {
+      flex: none;
+      min-height: clamp(9rem, 48vw, 12rem);
+      aspect-ratio: unset;
+    }
+
+    .mai-bento-middle__top .mai-ad-card__media {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      object-position: center 38%;
+      background: transparent;
+    }
+
+    .mai-bento-middle__pair {
+      flex: none;
+      min-height: unset;
+      gap: 10px;
+    }
+
+    .mai-ad-card--half {
+      height: auto;
+      min-height: clamp(7rem, 46vw, 10rem);
+      aspect-ratio: unset;
+    }
+
+    .mai-ad-card--half .mai-ad-card__media {
+      object-fit: cover;
+      object-position: center 38%;
+      background: transparent;
+    }
+
+    .mai-tile--rail-tall.mai-ad-card {
+      min-height: clamp(13rem, 70vw, 19rem);
+      height: auto;
+      align-self: stretch;
+      width: 100%;
+      justify-self: stretch;
+    }
+
+    .mai-ad-card__media--rail {
+      min-height: clamp(13rem, 70vw, 19rem);
+      width: 100%;
+      height: 100%;
+      max-height: none;
+      aspect-ratio: unset;
+      object-fit: cover;
+      object-position: center 40%;
+      background: transparent;
+    }
+
+    .mai-rail-promo__wrap {
+      position: relative;
+      display: block;
+      height: 100%;
+      min-height: inherit;
+      overflow: hidden;
+    }
+
+    .mai-rail-promo__caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1.35rem 0.72rem 0.62rem;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(15, 23, 42, 0.22) 42%,
+        rgba(15, 23, 42, 0.88) 100%
+      );
+      pointer-events: none;
+    }
+
+    .mai-rail-promo__title {
+      font-size: clamp(0.74rem, 3.2vw, 0.86rem);
+    }
+  }
+</style>

@@ -1,0 +1,254 @@
+---
+import { ml } from '../consts';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { headerNavTexts } from '../i18n/navLabels';
+import {
+  HREFLANG_BY_ROUTE,
+  ROUTE_LOCALES,
+  type RouteLocale,
+} from '../i18n/config';
+import {
+  LOCALE_NATIVE_NAME,
+  LOCALE_SWITCHER_MENU_LABEL,
+} from '../i18n/localeSwitcherLabels';
+import { withMulebuySpreadsheetAlt } from '../lib/withMulebuySpreadsheetAlt';
+
+interface Props {
+  pathname: string;
+  locale?: string;
+  /** White wordmark on dark glass hero nav; off → same asset darkened for light headers */
+  logoForDarkBackground?: boolean;
+}
+
+const { pathname, locale: localeProp, logoForDarkBackground = false } = Astro.props;
+const locale =
+  typeof localeProp === 'string' && localeProp.length > 0
+    ? localeProp
+    : (Astro.currentLocale ?? 'en');
+
+const routeLocale = (ROUTE_LOCALES as readonly string[]).includes(locale)
+  ? (locale as RouteLocale)
+  : ('en' as RouteLocale);
+
+type LocaleSwitchResolved =
+  | {
+      kind: 'localized';
+      segment: '' | 'how-to-buy' | 'news' | 'buyer-shares' | 'spreadsheet' | 'blog';
+    }
+  | { kind: 'fixed'; href: string };
+
+function resolveLocaleSwitchPath(rawPath: string): LocaleSwitchResolved {
+  const stripped = rawPath.split('?')[0] ?? '';
+  const n = stripped.replace(/\/$/, '') || '/';
+
+  if (n === '/join/discord') {
+    return { kind: 'fixed', href: '/join/discord' };
+  }
+
+  if (/^\/news\/.+/.test(n) && n !== '/news') {
+    return { kind: 'fixed', href: n };
+  }
+
+  const segs = n.split('/').filter(Boolean);
+  const first = segs[0];
+  const rest =
+    first && (ROUTE_LOCALES as readonly string[]).includes(first) ? segs.slice(1) : segs;
+  const joined = rest.join('/');
+
+  if (
+    joined === 'how-to-buy' ||
+    joined === 'news' ||
+    joined === 'buyer-shares' ||
+    joined === 'spreadsheet' ||
+    joined === 'blog'
+  ) {
+    return { kind: 'localized', segment: joined };
+  }
+  return { kind: 'localized', segment: '' };
+}
+
+const switchResolved = resolveLocaleSwitchPath(pathname);
+const localeMenuLabel =
+  LOCALE_SWITCHER_MENU_LABEL[routeLocale] ?? LOCALE_SWITCHER_MENU_LABEL.en;
+const localeChoices = ROUTE_LOCALES.map((code) => ({
+  code,
+  label: LOCALE_NATIVE_NAME[code],
+  href:
+    switchResolved.kind === 'fixed'
+      ? switchResolved.href
+      : getRelativeLocaleUrl(code, switchResolved.segment),
+}));
+
+type NavItem = { label: string; href: string; external: boolean };
+
+const t = headerNavTexts(locale);
+
+const categoryLinks: NavItem[] = [
+  { label: 'Shoes', href: `${ml}/c/shoes`, external: true },
+  { label: 'Jackets', href: `${ml}/search?q=${encodeURIComponent('jacket')}`, external: true },
+  { label: 'T-Shirts', href: `${ml}/search?q=${encodeURIComponent('t-shirt')}`, external: true },
+  { label: 'Hoodies/Sweaters', href: `${ml}/search?q=hoodie`, external: true },
+  {
+    label: 'Pants/Shorts',
+    href: `${ml}/search?q=${encodeURIComponent('pants shorts')}`,
+    external: true,
+  },
+  {
+    label: 'Headwear',
+    href: `${ml}/search?q=${encodeURIComponent('cap hat')}`,
+    external: true,
+  },
+  { label: 'Accessories', href: `${ml}/c/accessories`, external: true },
+  { label: 'Jersey', href: `${ml}/search?q=jersey`, external: true },
+  {
+    label: 'Bags',
+    href: `${ml}/search?q=${encodeURIComponent('bag backpack')}`,
+    external: true,
+  },
+  { label: 'Perfume', href: `${ml}/c/beauty`, external: true },
+  { label: 'Electronics', href: `${ml}/c/electronics`, external: true },
+  { label: 'Other stuff', href: `${ml}/products`, external: true },
+];
+
+const navBarLinks: NavItem[] = [
+  { label: t.howToBuy, href: getRelativeLocaleUrl(locale, 'how-to-buy'), external: false },
+  { label: t.news, href: getRelativeLocaleUrl(locale, 'news'), external: false },
+  { label: t.blog, href: getRelativeLocaleUrl(locale, 'blog'), external: false },
+  { label: t.buyerShares, href: getRelativeLocaleUrl(locale, 'buyer-shares'), external: false },
+  { label: t.spreadsheet, href: getRelativeLocaleUrl(locale, 'spreadsheet'), external: false },
+];
+
+const homeHref = getRelativeLocaleUrl(locale, '');
+const norm = (p: string) => (p.replace(/\/$/, '') === '' ? '/' : p.replace(/\/$/, ''));
+
+const pathnameNorm = norm(pathname.split('?')[0] ?? pathname);
+const homeNorm = norm(homeHref);
+---
+
+<nav class="oob-header-nav" aria-label="Site and category navigation">
+  <a
+    class:list={[
+      'oob-nav-link',
+      'oob-nav-link--home',
+      'oob-nav-link--brand',
+        { 'oob-nav-link--accent': pathnameNorm === homeNorm },
+    ]}
+    href={homeHref}
+    aria-label="mulebuyai.com home — Mulebuy Spreadsheet hub"
+  >
+    <img
+      class:list={[
+        'oob-site-logo',
+        'oob-site-logo--mulebuy',
+        !logoForDarkBackground && 'oob-site-logo--for-light-header',
+      ]}
+      src="/mulebuy-brand/logo-mulebuy-white.png"
+      alt={withMulebuySpreadsheetAlt('Mulebuy')}
+      width="220"
+      height="60"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+  </a>
+
+  <details class="oob-nav-dd">
+    <summary class="oob-nav-dd-trigger" aria-label={`${t.categories}: Mulebuy Spreadsheet browse menu`}>
+      {t.categories}
+    </summary>
+    <div class="oob-nav-dd-panel">
+      {
+        categoryLinks.map((item) => (
+          <a class="oob-nav-dd-link" href={item.href} target="_blank" rel="noopener noreferrer">
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </details>
+
+  {
+    navBarLinks.map((item) =>
+      item.external ? (
+        <a class="oob-nav-link" href={item.href} target="_blank" rel="noopener noreferrer">
+          {item.label}
+        </a>
+      ) : (
+        <a
+          class:list={[
+            'oob-nav-link',
+            {
+              'oob-nav-link--accent':
+                pathnameNorm === norm(item.href) || pathnameNorm.startsWith(`${norm(item.href)}/`),
+            },
+          ]}
+          href={item.href}
+        >
+          {item.label}
+        </a>
+      ),
+    )
+  }
+
+  <details class="oob-nav-dd oob-nav-dd--locale">
+    <summary
+      class="oob-nav-dd-trigger"
+      aria-label={`${localeMenuLabel} — ${LOCALE_NATIVE_NAME[routeLocale]} (current)`}
+    >
+      {LOCALE_NATIVE_NAME[routeLocale]}
+    </summary>
+    <div class="oob-nav-dd-panel">
+      {
+        localeChoices.map(({ code, label, href }) => (
+          <a
+            class:list={['oob-nav-dd-link', code === routeLocale && 'oob-nav-dd-link--current']}
+            href={href}
+            hreflang={HREFLANG_BY_ROUTE[code]}
+            lang={code}
+            aria-current={code === routeLocale ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        ))
+      }
+    </div>
+  </details>
+</nav>
+
+<style>
+  .oob-site-logo {
+    display: block;
+    height: 1.75rem;
+    width: auto;
+    max-width: min(7.5rem, 38vw);
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .oob-site-logo--mulebuy {
+    height: 1.85rem;
+    max-width: min(11rem, 48vw);
+  }
+
+  /* Same PNG as mulebuy.com logo-white; invert luminance for white / frosted headers */
+  .oob-site-logo--for-light-header {
+    filter: brightness(0);
+  }
+
+  .oob-nav-link--brand {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0.55rem;
+    justify-content: flex-start;
+  }
+
+  .oob-nav-dd--locale .oob-nav-dd-panel {
+    min-width: 10.5rem;
+    max-height: min(70vh, 16rem);
+  }
+
+  .oob-nav-dd-link--current {
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--accent-dark, #0f766e);
+  }
+</style>

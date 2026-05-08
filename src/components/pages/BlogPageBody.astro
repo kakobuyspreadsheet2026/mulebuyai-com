@@ -1,0 +1,130 @@
+---
+import SiteHeader from '../SiteHeader.astro';
+import SiteFooter from '../SiteFooter.astro';
+import type { BlogPageCopy } from '../../i18n/copy/blogPage';
+
+export type BlogPostListEntry = {
+  slug: string;
+  title: string;
+  published: string;
+  description: string;
+  lang?: string;
+};
+
+interface Props {
+  locale: string;
+  copy: BlogPageCopy;
+  homeHref: string;
+  posts?: BlogPostListEntry[];
+}
+
+const { locale, copy, homeHref, posts = [] } = Astro.props;
+---
+
+<SiteHeader locale={locale} />
+
+<main>
+  <section class="band-alt">
+    <div class="wrap">
+      <div class="page-mast">
+        <p class="blog-back">
+          <a href={homeHref}>← Home</a>
+        </p>
+        <h1 class="simple-page-title">{copy.h1}</h1>
+        <div class="blog-intro" set:html={copy.introHtml} />
+
+        {
+          posts.length > 0 ? (
+            <ul class="blog-post-list">
+              {posts.map((p) => (
+                <li class="blog-post-card">
+                  <time class="blog-post-date" datetime={p.published}>
+                    {p.published}
+                  </time>
+                  <h2 class="blog-post-title">
+                    <a href={`/blog/${p.slug}/`}>{p.title}</a>
+                  </h2>
+                  <p class="blog-post-desc">{p.description}</p>
+                  {p.lang === 'en' && locale !== 'en' ? (
+                    <p class="blog-post-lang-note">Article in English</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="blog-placeholder muted">Post list coming soon.</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</main>
+
+<SiteFooter />
+
+<style>
+  .blog-back {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+  .blog-intro {
+    margin: 0 0 1.25rem;
+  }
+  .blog-intro :global(.section-intro) {
+    margin-top: 0;
+  }
+  .blog-placeholder {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .blog-post-list {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 42rem;
+  }
+  .blog-post-card {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface, #fff);
+  }
+  .blog-post-date {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .blog-post-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .blog-post-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .blog-post-title a:hover {
+    color: var(--accent-dark, #0f766e);
+    text-decoration: underline;
+  }
+  .blog-post-desc {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .blog-post-lang-note {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>

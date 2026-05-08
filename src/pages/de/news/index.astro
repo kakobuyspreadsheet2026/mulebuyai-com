@@ -1,0 +1,74 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import NewsPageBody from '../../../components/pages/NewsPageBody.astro';
+import { canonicalHref, ml, siteStructuredDataIds } from '../../../consts';
+import officialMulebuyNoticeExcerpts from '../../../data/officialMulebuyNoticeExcerpts.json';
+import {
+  homeCategoryBannerTapUrls,
+  homeCategoryBannersWithHrefs,
+} from '../../../lib/homeCategoryBannersWithHrefs';
+import { getNewsCopy, hydrateNewsCopy, newsHowToJsonLd } from '../../../i18n/copy/newsPage';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { breadcrumbListLd, breadcrumbNameFromPageTitle, localeHomePath } from '../../../lib/seo';
+import { HTML_LANG_BY_ROUTE } from '../../../i18n/config';
+
+export const prerender = true;
+
+const locale = 'de';
+const canonicalPath = '/de/news';
+
+const origin = Astro.site?.origin ?? 'https://mulebuyai.com';
+
+const raw = getNewsCopy(locale);
+const copy = hydrateNewsCopy(raw, {
+  guideUrl: `${ml}/guide`,
+  buyerUrl: getRelativeLocaleUrl(locale, 'buyer-shares'),
+  howToUrl: getRelativeLocaleUrl(locale, 'how-to-buy'),
+  mulebuyHomeUrl: 'https://mulebuy.com/',
+  homeCuratedUrl: `${getRelativeLocaleUrl(locale, '')}#curated-directory`,
+  mlCatalogUrl: `${ml}/spreadsheet/mulebuy`,
+  excerptCount: officialMulebuyNoticeExcerpts.length,
+  carouselTapUrls: homeCategoryBannerTapUrls(locale),
+});
+
+const homeHref = getRelativeLocaleUrl(locale, '');
+const { websiteId } = siteStructuredDataIds(origin);
+const pageUrl = canonicalHref(Astro.site, canonicalPath);
+const inLang = HTML_LANG_BY_ROUTE[locale];
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
+  name: copy.title,
+  url: pageUrl,
+  description: copy.description,
+  inLanguage: inLang,
+  isPartOf: { '@id': websiteId },
+};
+
+const howToLd = newsHowToJsonLd(copy, inLang);
+
+const breadcrumbLd = breadcrumbListLd(Astro.site, [
+  { name: 'Home', path: localeHomePath(locale) },
+  { name: breadcrumbNameFromPageTitle(copy.title), path: canonicalPath },
+]);
+
+---
+
+<Layout
+  title={copy.title}
+  description={copy.description}
+  canonicalPath={canonicalPath}
+  locale={locale}
+  i18nRouteSegment="news"
+  jsonLd={[webPageLd, howToLd, breadcrumbLd]}
+>
+  <NewsPageBody
+    locale={locale}
+    copy={copy}
+    homeHref={homeHref}
+    banners={homeCategoryBannersWithHrefs(locale)}
+    excerpts={officialMulebuyNoticeExcerpts}
+  />
+</Layout>

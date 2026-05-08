@@ -1,0 +1,30 @@
+---
+import { mlSpreadsheetMulebuy } from '../consts';
+
+interface Props {
+  disclaimerTitle?: string;
+  /** Raw HTML for the disclaimer body (trusted, from i18n bundles). */
+  disclaimerHtml?: string;
+  copyrightLine?: string;
+}
+
+const {
+  disclaimerTitle = 'Disclaimer:',
+  disclaimerHtml,
+  copyrightLine = '© 2026 mulebuyai.com · Editorial notes only; carts, payouts, and export approvals stay with Mulebuy.',
+} = Astro.props;
+
+const defaultDisclaimerHtml = `mulebuyai.com is an independent editorial guide to <strong>Mulebuy Spreadsheet</strong>-style discovery: explainers, catalogue entry points, URL hygiene, QC caveats, and freight reminders. The <a href="${mlSpreadsheetMulebuy}" target="_blank" rel="noopener noreferrer">Spreadsheet browse bridge</a>, Chinese marketplaces, and <a href="https://mulebuy.com/" target="_blank" rel="noopener noreferrer">mulebuy.com</a> are separate services; we never hold funds, place orders, store parcels, or approve carrier labels. Re-check listings, warehouse photos, seller terms, duties, and platform rules yourself. No partnership with Mulebuy or linked merchants is claimed here.`;
+---
+
+<footer>
+  <div class="wrap">
+    <div class="page-mast">
+      <p>
+        <strong>{disclaimerTitle}</strong>{' '}
+        <span set:html={disclaimerHtml ?? defaultDisclaimerHtml} />
+      </p>
+      <p style="margin-top:1rem;">{copyrightLine}</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,188 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from './SiteHeader.astro';
+import SiteFooter from './SiteFooter.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { breadcrumbListLd, localeHomePath } from '../lib/seo';
+import { canonicalHref, defaultOgImagePath, siteStructuredDataIds } from '../consts';
+import { HTML_LANG_BY_ROUTE } from '../i18n/config';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  headline: string;
+  publishedISO: string;
+  displayDate: string;
+  /** Optional share image path (e.g. `/og-foo.png`) or absolute HTTPS URL. */
+  ogImage?: string;
+}
+
+const { title, description, canonicalPath, headline, publishedISO, displayDate, ogImage } = Astro.props;
+
+const locale = 'en';
+const blogIndexHref = getRelativeLocaleUrl(locale, 'blog');
+const homeHref = getRelativeLocaleUrl(locale, '');
+
+const origin = Astro.site?.origin ?? 'https://mulebuyai.com';
+const { organizationId, websiteId } = siteStructuredDataIds(origin);
+const pageUrl = canonicalHref(Astro.site, canonicalPath);
+const shareImageUrl =
+  ogImage && /^https?:\/\//i.test(ogImage)
+    ? ogImage
+    : ogImage
+      ? new URL(ogImage, Astro.site).href
+      : new URL(defaultOgImagePath, Astro.site).href;
+
+const breadcrumbLd = breadcrumbListLd(Astro.site, [
+  { name: 'Home', path: localeHomePath(locale) },
+  { name: 'Blog', path: '/blog' },
+  {
+    name: headline.length > 88 ? `${headline.slice(0, 85)}…` : headline,
+    path: canonicalPath,
+  },
+]);
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${pageUrl}#article`,
+  url: pageUrl,
+  headline,
+  image: [shareImageUrl],
+  datePublished: publishedISO,
+  dateModified: publishedISO,
+  author: { '@id': organizationId },
+  publisher: { '@id': organizationId },
+  description,
+  inLanguage: HTML_LANG_BY_ROUTE.en,
+  isPartOf: { '@id': websiteId },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+  },
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  locale={locale}
+  hreflangLocales={['en']}
+  ogImage={ogImage}
+  ogType="article"
+  articlePublishedTime={publishedISO}
+  articleModifiedTime={publishedISO}
+  jsonLd={[articleLd, breadcrumbLd]}
+>
+  <SiteHeader locale={locale} />
+
+  <main>
+    <section class="band-alt">
+      <div class="wrap">
+        <div class="page-mast">
+          <p class="blog-nav">
+            <a href={homeHref}>← Home</a>
+            <span aria-hidden="true"> · </span>
+            <a href={blogIndexHref}>Blog</a>
+          </p>
+
+          <article class="blog-piece">
+            <header class="blog-piece-head">
+              <h1 class="simple-page-title">{headline}</h1>
+              <p class="blog-piece-meta">
+                <time datetime={publishedISO}>{displayDate}</time>
+                <span> · Editorial · mulebuyai.com</span>
+              </p>
+              <div class="blog-lede-wrap">
+                <slot name="lede" />
+              </div>
+            </header>
+
+            <div class="blog-body prose-block">
+              <slot />
+              <p class="blog-disclaimer">
+                <strong>Disclaimer:</strong> mulebuyai.com publishes independent editorial notes for Mulebuy Spreadsheet shoppers—browse bridges,
+                explainers, and mirrored notices—not checkout, warehousing, or dispute outcomes on mulebuy.com. Features and policies change; rely on your
+                signed-in Mulebuy console for binding quotes and QC tooling.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .blog-nav {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+  }
+  .blog-piece-head {
+    margin-bottom: 1.25rem;
+    max-width: 48rem;
+  }
+  .blog-piece-meta {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .blog-lede-wrap :global(.blog-lede) {
+    margin: 0;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--text);
+    max-width: 48rem;
+  }
+  .blog-piece {
+    max-width: 52rem;
+  }
+  .prose-block {
+    font-size: 0.975rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .prose-block :where(h2) {
+    margin: 1.75rem 0 0.65rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .prose-block :where(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose-block :where(h3) {
+    margin: 1.25rem 0 0.45rem;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .prose-block :where(p) {
+    margin: 0 0 0.85rem;
+  }
+  .prose-block :where(ul, ol) {
+    margin: 0 0 0.85rem;
+    padding-left: 1.35rem;
+  }
+  .prose-block :where(li) {
+    margin-bottom: 0.4rem;
+  }
+  .prose-block :where(strong) {
+    color: var(--text);
+  }
+  .prose-block :where(a) {
+    font-weight: 600;
+    color: var(--accent-dark, #0f766e);
+  }
+  .blog-disclaimer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+</style>

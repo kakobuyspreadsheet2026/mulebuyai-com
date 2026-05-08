@@ -1,0 +1,1269 @@
+---
+/**
+ * “How it works” — left step rail + right panel (Mulebuy-style).
+ * Copy mirrors official checkout journey; mulebuyai.com stays the editorial hub.
+ */
+const steps = [
+  {
+    title: 'Search and Match',
+    body:
+      'Browse indexed Mulebuy Spreadsheet catalogue lanes or paste a trusted Taobao / Weidian / 1688 URL, then match that listing inside Mulebuy before you fund.',
+  },
+  {
+    title: 'Pay for Goods',
+    body:
+      'Complete payment for your items inside Mulebuy so orders can be purchased on your behalf.',
+  },
+  {
+    title: 'Order Reception and Transfer',
+    body:
+      'Once paid, orders move through reception and domestic transfer toward the warehouse workflow.',
+  },
+  {
+    title: 'QC and Warehousing',
+    body:
+      'Quality checks and storage updates appear in your warehouse — review photos before shipping.',
+  },
+  {
+    title: 'Submit International Shipping',
+    body:
+      'Choose lines, declare packages, and submit international shipping when you are ready.',
+  },
+  {
+    title: 'Efficient Management',
+    body:
+      'Track parcels, messages, and account tools in one place for ongoing shipping management.',
+  },
+] as const;
+---
+
+<section class="mai-how band-alt" id="how-it-works" aria-labelledby="mai-how-heading">
+  <div class="wrap mai-how__wrap">
+    <h2 id="mai-how-heading" class="mai-how__heading">How it works</h2>
+    <p class="mai-how__sub">
+      After <strong>Mulebuy Spreadsheet</strong>-style discovery (indexed lanes + editorial notes on this site), the steps below follow{' '}
+      <a href="https://mulebuy.com/" target="_blank" rel="noopener noreferrer">Mulebuy</a>
+      checkout—quotes, domestic legs, warehouse QC, and labels stay on mulebuy.com only.
+    </p>
+
+    <div class="mai-how__grid" data-mai-how>
+      <div class="mai-how__nav" role="tablist" aria-label="Mulebuy workflow steps">
+        {
+          steps.map((step, i) => (
+            <button
+              type="button"
+              class:list={['mai-how__tab', i === 0 && 'is-active']}
+              role="tab"
+              id={`mai-how-tab-${i}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls={`mai-how-panel-${i}`}
+              tabindex={i === 0 ? 0 : -1}
+              data-how-tab={i}
+            >
+              <span class="mai-how__tab-step">{`Step ${String(i + 1).padStart(2, '0')}`}</span>
+              <span class="mai-how__tab-title">{step.title}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="mai-how__panels">
+        {
+          steps.map((step, i) => (
+            <div
+              class:list={['mai-how__panel', i === 0 && 'is-active']}
+              id={`mai-how-panel-${i}`}
+              role="tabpanel"
+              aria-labelledby={`mai-how-tab-${i}`}
+              tabindex={0}
+              hidden={i !== 0}
+              data-how-panel={i}
+            >
+              <h3 class="mai-how__panel-title">{step.title}</h3>
+              <p class="mai-how__panel-body">{step.body}</p>
+
+              {i === 0 && (
+                <div class="mai-how__viz" aria-hidden="true">
+                  <div class="mai-how__viz-row">
+                    <div class="mai-how__mock mai-how__mock--platform">
+                      <div class="mai-how__mock-h">Platform Search</div>
+                      <div class="mai-how__fake-search">
+                        <span class="mai-how__fake-search-ico" />
+                        <span class="mai-how__fake-search-input" />
+                      </div>
+                      <div class="mai-how__fake-rows">
+                        <div class="mai-how__fake-row" />
+                        <div class="mai-how__fake-row mai-how__fake-row--pick">
+                          <span class="mai-how__fake-thumb" />
+                          <span class="mai-how__fake-lines">
+                            <span class="mai-how__fake-line" />
+                            <span class="mai-how__fake-line mai-how__fake-line--short" />
+                          </span>
+                          <span class="mai-how__fake-plus">+</span>
+                        </div>
+                        <div class="mai-how__fake-row" />
+                      </div>
+                    </div>
+
+                    <div class="mai-how__link-col">
+                      <svg class="mai-how__link-svg" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+                        <line x1="0" y1="20" x2="120" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="0" cy="20" r="4" fill="currentColor" />
+                        <circle cx="120" cy="20" r="4" fill="currentColor" />
+                      </svg>
+                    </div>
+
+                    <div class="mai-how__mock mai-how__mock--url">
+                      <div class="mai-how__mock-h">Search URL</div>
+                      <div class="mai-how__paste-wrap">
+                        <span class="mai-how__paste-label">Paste Link</span>
+                        <div class="mai-how__paste-field">
+                          https://item.taobao
+                          <span class="mai-how__cursor" />
+                        </div>
+                      </div>
+                      <div class="mai-how__clipboard" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <rect x="8" y="6" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                          <rect x="6" y="4" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5" opacity="0.7" />
+                        </svg>
+                      </div>
+                      <div class="mai-how__preview">
+                        <span class="mai-how__fake-thumb mai-how__fake-thumb--lg" />
+                        <span class="mai-how__fake-lines">
+                          <span class="mai-how__fake-line" />
+                          <span class="mai-how__fake-line mai-how__fake-line--short" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {i === 1 && (
+                <div class="mai-how__viz mai-how__viz--pay" aria-hidden="true">
+                  <div class="mai-how__viz-row mai-how__viz-row--stretch">
+                    <div class="mai-how__mock mai-how__mock--grow">
+                      <div class="mai-how__mock-h">Cart checkout</div>
+                      <div class="mai-how__pay-lines">
+                        <div class="mai-how__pay-item">
+                          <span class="mai-how__fake-thumb" />
+                          <span class="mai-how__fake-lines">
+                            <span class="mai-how__fake-line" />
+                            <span class="mai-how__fake-line mai-how__fake-line--short" />
+                          </span>
+                          <span class="mai-how__pay-amt">¥186.00</span>
+                        </div>
+                        <div class="mai-how__pay-item mai-how__pay-item--dim">
+                          <span class="mai-how__fake-thumb" />
+                          <span class="mai-how__fake-lines">
+                            <span class="mai-how__fake-line" />
+                            <span class="mai-how__fake-line mai-how__fake-line--short" />
+                          </span>
+                          <span class="mai-how__pay-amt">¥42.50</span>
+                        </div>
+                      </div>
+                      <div class="mai-how__pay-divider" />
+                      <div class="mai-how__pay-total">
+                        <span>Payable</span>
+                        <strong>$33.12 USD</strong>
+                      </div>
+                    </div>
+                    <div class="mai-how__mock mai-how__mock--grow">
+                      <div class="mai-how__mock-h">Payment method</div>
+                      <div class="mai-how__pay-methods">
+                        <span class="mai-how__pay-pill is-active">Balance</span>
+                        <span class="mai-how__pay-pill">Card</span>
+                        <span class="mai-how__pay-pill">PayPal</span>
+                      </div>
+                      <div class="mai-how__pay-lock">
+                        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            fill="currentColor"
+                            d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+                          />
+                        </svg>
+                        Encrypted checkout on Mulebuy
+                      </div>
+                      <div class="mai-how__pay-cta">Confirm payment</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {i === 2 && (
+                <div class="mai-how__viz mai-how__viz--flow" aria-hidden="true">
+                  <div class="mai-how__flow-track">
+                    <div class="mai-how__flow-node">
+                      <span class="mai-how__flow-dot" />
+                      <span class="mai-how__flow-label">Paid order</span>
+                    </div>
+                    <div class="mai-how__flow-arrow" />
+                    <div class="mai-how__flow-node mai-how__flow-node--hot">
+                      <span class="mai-how__flow-dot" />
+                      <span class="mai-how__flow-label">Domestic transfer</span>
+                    </div>
+                    <div class="mai-how__flow-arrow" />
+                    <div class="mai-how__flow-node">
+                      <span class="mai-how__flow-dot" />
+                      <span class="mai-how__flow-label">Warehouse inbound</span>
+                    </div>
+                  </div>
+                  <div class="mai-how__mock mai-how__mock--below">
+                    <div class="mai-how__mock-h">Transfer timeline</div>
+                    <div class="mai-how__timeline">
+                      <div class="mai-how__tl-row">
+                        <span class="mai-how__tl-dot" />
+                        <span class="mai-how__tl-text">Seller shipped · tracking synced</span>
+                      </div>
+                      <div class="mai-how__tl-row mai-how__tl-row--active">
+                        <span class="mai-how__tl-dot" />
+                        <span class="mai-how__tl-text">Hub scanning · route to WH</span>
+                      </div>
+                      <div class="mai-how__tl-row">
+                        <span class="mai-how__tl-dot" />
+                        <span class="mai-how__tl-text">Arrival photo pending</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {i === 3 && (
+                <div class="mai-how__viz mai-how__viz--qc" aria-hidden="true">
+                  <div class="mai-how__viz-row mai-how__viz-row--stretch">
+                    <div class="mai-how__mock mai-how__mock--photo">
+                      <div class="mai-how__mock-h">Warehouse photo</div>
+                      <div class="mai-how__qc-photo">
+                        <span class="mai-how__qc-badge">QC</span>
+                      </div>
+                      <div class="mai-how__qc-thumbs">
+                        <span class="mai-how__qc-thumb is-active" />
+                        <span class="mai-how__qc-thumb" />
+                        <span class="mai-how__qc-thumb" />
+                      </div>
+                    </div>
+                    <div class="mai-how__mock mai-how__mock--grow">
+                      <div class="mai-how__mock-h">Inspection checklist</div>
+                      <ul class="mai-how__qc-list">
+                        <li class="mai-how__qc-li mai-how__qc-li--ok">
+                          <span class="mai-how__qc-ico">✓</span> Outer packaging intact
+                        </li>
+                        <li class="mai-how__qc-li mai-how__qc-li--ok">
+                          <span class="mai-how__qc-ico">✓</span> Label matches order ID
+                        </li>
+                        <li class="mai-how__qc-li mai-how__qc-li--wait">
+                          <span class="mai-how__qc-ico">⋯</span> Awaiting your confirmation
+                        </li>
+                      </ul>
+                      <div class="mai-how__qc-actions">
+                        <span class="mai-how__qc-btn mai-how__qc-btn--ghost">Request retake</span>
+                        <span class="mai-how__qc-btn">Approve storage</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {i === 4 && (
+                <div class="mai-how__viz mai-how__viz--ship" aria-hidden="true">
+                  <div class="mai-how__viz-row mai-how__viz-row--stretch">
+                    <div class="mai-how__mock mai-how__mock--grow">
+                      <div class="mai-how__mock-h">International parcel</div>
+                      <div class="mai-how__ship-box">
+                        <div class="mai-how__ship-tape" />
+                        <span class="mai-how__ship-tag">CN → YOU</span>
+                      </div>
+                      <div class="mai-how__ship-meta">
+                        <span class="mai-how__fake-line mai-how__fake-line--short" />
+                        <span class="mai-how__fake-line mai-how__fake-line--w40" />
+                      </div>
+                    </div>
+                    <div class="mai-how__mock mai-how__mock--grow">
+                      <div class="mai-how__mock-h">Shipping line</div>
+                      <div class="mai-how__ship-select">
+                        <span class="mai-how__ship-select-val">Economy · tracked</span>
+                        <span class="mai-how__ship-chev">▾</span>
+                      </div>
+                      <div class="mai-how__ship-declare">
+                        <span class="mai-how__paste-label">Declared value</span>
+                        <div class="mai-how__ship-input">$42.00 USD</div>
+                      </div>
+                      <div class="mai-how__pay-cta mai-how__pay-cta--inline">Submit shipment</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {i === 5 && (
+                <div class="mai-how__viz mai-how__viz--dash" aria-hidden="true">
+                  <div class="mai-how__dash-stats">
+                    <div class="mai-how__dash-stat">
+                      <span class="mai-how__dash-stat-n">12</span>
+                      <span class="mai-how__dash-stat-l">Active</span>
+                    </div>
+                    <div class="mai-how__dash-stat">
+                      <span class="mai-how__dash-stat-n">3</span>
+                      <span class="mai-how__dash-stat-l">In transit</span>
+                    </div>
+                    <div class="mai-how__dash-stat mai-how__dash-stat--accent">
+                      <span class="mai-how__dash-stat-n">2</span>
+                      <span class="mai-how__dash-stat-l">Needs action</span>
+                    </div>
+                    <div class="mai-how__dash-stat">
+                      <span class="mai-how__dash-stat-n">48</span>
+                      <span class="mai-how__dash-stat-l">Delivered</span>
+                    </div>
+                  </div>
+                  <div class="mai-how__mock mai-how__mock--below">
+                    <div class="mai-how__mock-h">Parcel inbox</div>
+                    <div class="mai-how__dash-rows">
+                      <div class="mai-how__dash-row">
+                        <span class="mai-how__dash-id">MU‑92841</span>
+                        <span class="mai-how__dash-pill">Delivered</span>
+                      </div>
+                      <div class="mai-how__dash-row">
+                        <span class="mai-how__dash-id">MU‑92876</span>
+                        <span class="mai-how__dash-pill mai-how__dash-pill--hot">Customs doc</span>
+                      </div>
+                      <div class="mai-how__dash-row">
+                        <span class="mai-how__dash-id">MU‑92902</span>
+                        <span class="mai-how__dash-pill mai-how__dash-pill--prog">In transit</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initMaiHow(root) {
+    if (!(root instanceof HTMLElement)) return;
+    if (root.dataset.maiHowBound === '1') return;
+    root.dataset.maiHowBound = '1';
+
+    const tabs = [...root.querySelectorAll('[data-how-tab]')];
+    const panels = [...root.querySelectorAll('[data-how-panel]')];
+    if (tabs.length === 0 || panels.length === 0) return;
+
+    const show = (idx) => {
+      const n = ((idx % tabs.length) + tabs.length) % tabs.length;
+      tabs.forEach((t, j) => {
+        const on = j === n;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((p, j) => {
+        const on = j === n;
+        p.classList.toggle('is-active', on);
+        p.hidden = !on;
+      });
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => show(i));
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          show(i + 1);
+          tabs[(i + 1) % tabs.length]?.focus();
+        }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          show(i - 1);
+          tabs[(i - 1 + tabs.length) % tabs.length]?.focus();
+        }
+        if (e.key === 'Home') {
+          e.preventDefault();
+          show(0);
+          tabs[0]?.focus();
+        }
+        if (e.key === 'End') {
+          e.preventDefault();
+          show(tabs.length - 1);
+          tabs[tabs.length - 1]?.focus();
+        }
+      });
+    });
+  }
+
+  function boot() {
+    document.querySelectorAll('[data-mai-how]').forEach(initMaiHow);
+  }
+
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>
+
+<style>
+  .mai-how {
+    --mai-how-orange: #ff9a1a;
+    --mai-how-navy: #1a1f52;
+    --mai-how-muted: #64748b;
+    --mai-how-card: #f4f4f6;
+    padding: clamp(2rem, 5vw, 3rem) 0;
+  }
+
+  .mai-how__wrap {
+    text-align: left;
+    max-width: min(72rem, 100%);
+    margin-inline: auto;
+  }
+
+  .mai-how__heading {
+    text-align: center;
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .mai-how__sub {
+    text-align: center;
+    margin: 0 auto 2rem;
+    max-width: 42rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .mai-how__sub a {
+    font-weight: 700;
+    color: #6d28d9;
+  }
+
+  .mai-how__grid {
+    display: grid;
+    grid-template-columns: minmax(12.5rem, 15.5rem) minmax(0, 1fr);
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+    align-items: start;
+  }
+
+  .mai-how__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mai-how__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    width: 100%;
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.65rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ececf1;
+    color: #334155;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .mai-how__tab:hover {
+    border-color: rgba(245, 158, 11, 0.45);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  }
+
+  .mai-how__tab.is-active {
+    background: var(--mai-how-navy);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 10px 28px rgba(26, 31, 82, 0.25);
+  }
+
+  .mai-how__tab-step {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.92;
+  }
+
+  .mai-how__tab:not(.is-active) .mai-how__tab-step {
+    color: #475569;
+  }
+
+  .mai-how__tab-title {
+    font-size: 0.875rem;
+    font-weight: 650;
+    line-height: 1.35;
+  }
+
+  .mai-how__panels {
+    min-width: 0;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #fff;
+    padding: clamp(1.15rem, 2.5vw, 1.65rem);
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+  }
+
+  .mai-how__panel-title {
+    margin: 0 0 0.45rem;
+    font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .mai-how__panel-body {
+    margin: 0 0 1.25rem;
+    max-width: 48rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--mai-how-muted);
+  }
+
+  .mai-how__viz {
+    margin-top: 0.25rem;
+  }
+
+  .mai-how__viz-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .mai-how__mock {
+    flex: 1 1 13rem;
+    min-width: min(100%, 13rem);
+    border-radius: 0.65rem;
+    background: var(--mai-how-card);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 0.65rem 0.75rem 0.85rem;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  }
+
+  .mai-how__mock--url {
+    background: #fafafa;
+    position: relative;
+  }
+
+  .mai-how__mock-h {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #475569;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .mai-how__fake-search {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fff;
+    border-radius: 0.45rem;
+    padding: 0.35rem 0.45rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    margin-bottom: 0.5rem;
+  }
+
+  .mai-how__fake-search-ico {
+    width: 0.85rem;
+    height: 0.85rem;
+    border: 2px solid #94a3b8;
+    border-radius: 999px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    opacity: 0.85;
+  }
+
+  .mai-how__fake-search-input {
+    flex: 1;
+    height: 0.35rem;
+    border-radius: 3px;
+    background: #e2e8f0;
+  }
+
+  .mai-how__fake-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .mai-how__fake-row {
+    height: 2.35rem;
+    border-radius: 0.45rem;
+    background: #e8e8ec;
+    border: 1px solid transparent;
+  }
+
+  .mai-how__fake-row--pick {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem;
+    background: #fff;
+    border-color: var(--mai-how-orange);
+    box-shadow: 0 0 0 1px var(--mai-how-orange);
+  }
+
+  .mai-how__fake-thumb {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 0.25rem;
+    background: linear-gradient(145deg, #cbd5e1, #94a3b8);
+    flex-shrink: 0;
+  }
+
+  .mai-how__fake-thumb--lg {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .mai-how__fake-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .mai-how__fake-line {
+    height: 0.32rem;
+    border-radius: 2px;
+    background: #cbd5e1;
+  }
+
+  .mai-how__fake-line--short {
+    width: 55%;
+  }
+
+  .mai-how__fake-line--w40 {
+    width: 40%;
+  }
+
+  .mai-how__fake-plus {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    background: var(--mai-how-orange);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .mai-how__link-col {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 8rem;
+    color: var(--mai-how-orange);
+    width: 2.5rem;
+    align-self: center;
+  }
+
+  .mai-how__link-svg {
+    width: 100%;
+    min-width: 3rem;
+    height: 40px;
+  }
+
+  .mai-how__paste-wrap {
+    margin-bottom: 0.65rem;
+  }
+
+  .mai-how__paste-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+  }
+
+  .mai-how__paste-field {
+    position: relative;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #334155;
+    padding: 0.45rem 0.55rem;
+    border-radius: 0.45rem;
+    border: 2px solid var(--mai-how-orange);
+    background: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 154, 26, 0.15);
+  }
+
+  .mai-how__cursor {
+    display: inline-block;
+    width: 1px;
+    height: 0.85em;
+    margin-left: 1px;
+    background: #1e293b;
+    vertical-align: -0.12em;
+    animation: mai-how-blink 1s step-end infinite;
+  }
+
+  @keyframes mai-how-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .mai-how__clipboard {
+    position: absolute;
+    top: 2.1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.45rem;
+    background: var(--mai-how-orange);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+    pointer-events: none;
+  }
+
+  .mai-how__preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    margin-top: 0.15rem;
+  }
+
+  .mai-how__viz-row--stretch {
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .mai-how__mock--grow {
+    flex: 1 1 14rem;
+  }
+
+  .mai-how__mock--below {
+    margin-top: 0.75rem;
+    width: 100%;
+  }
+
+  /* Step 02 — Pay */
+  .mai-how__pay-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .mai-how__pay-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem;
+    border-radius: 0.45rem;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+  }
+
+  .mai-how__pay-item--dim {
+    opacity: 0.72;
+  }
+
+  .mai-how__pay-amt {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--mai-how-navy);
+    flex-shrink: 0;
+  }
+
+  .mai-how__pay-divider {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.08);
+    margin: 0.55rem 0;
+  }
+
+  .mai-how__pay-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: #475569;
+  }
+
+  .mai-how__pay-total strong {
+    font-size: 0.95rem;
+    color: var(--mai-how-navy);
+  }
+
+  .mai-how__pay-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .mai-how__pay-pill {
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: #e8e8ec;
+    color: #475569;
+    border: 1px solid transparent;
+  }
+
+  .mai-how__pay-pill.is-active {
+    background: rgba(255, 154, 26, 0.18);
+    color: #9a3412;
+    border-color: var(--mai-how-orange);
+  }
+
+  .mai-how__pay-lock {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.62rem;
+    color: #64748b;
+    margin-bottom: 0.55rem;
+  }
+
+  .mai-how__pay-cta {
+    text-align: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(180deg, #ffb024 0%, var(--mai-how-orange) 100%);
+    box-shadow: 0 8px 22px rgba(245, 158, 11, 0.35);
+  }
+
+  .mai-how__pay-cta--inline {
+    margin-top: 0.55rem;
+  }
+
+  /* Step 03 — Transfer */
+  .mai-how__flow-track {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    padding: 0.65rem 0.5rem;
+    border-radius: 0.65rem;
+    background: var(--mai-how-card);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    margin-bottom: 0.75rem;
+  }
+
+  .mai-how__flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 1 1 5.5rem;
+    min-width: 4.5rem;
+    text-align: center;
+  }
+
+  .mai-how__flow-node--hot .mai-how__flow-dot {
+    box-shadow: 0 0 0 3px rgba(255, 154, 26, 0.35);
+    background: var(--mai-how-orange);
+  }
+
+  .mai-how__flow-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+    background: #94a3b8;
+  }
+
+  .mai-how__flow-label {
+    font-size: 0.62rem;
+    font-weight: 750;
+    color: #475569;
+    line-height: 1.25;
+  }
+
+  .mai-how__flow-arrow {
+    flex: 0 0 1.25rem;
+    height: 2px;
+    background: linear-gradient(90deg, #cbd5e1, var(--mai-how-orange), #cbd5e1);
+    border-radius: 2px;
+    align-self: center;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+  }
+
+  .mai-how__timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .mai-how__tl-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    color: #64748b;
+  }
+
+  .mai-how__tl-row--active {
+    color: #1e293b;
+    font-weight: 700;
+  }
+
+  .mai-how__tl-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: #cbd5e1;
+    margin-top: 0.28rem;
+    flex-shrink: 0;
+  }
+
+  .mai-how__tl-row--active .mai-how__tl-dot {
+    background: var(--mai-how-orange);
+    box-shadow: 0 0 0 3px rgba(255, 154, 26, 0.22);
+  }
+
+  /* Step 04 — QC */
+  .mai-how__mock--photo {
+    flex: 1 1 11rem;
+    max-width: 16rem;
+  }
+
+  .mai-how__qc-photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.5rem;
+    background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 48%, #94a3b8 100%);
+    margin-bottom: 0.45rem;
+    overflow: hidden;
+  }
+
+  .mai-how__qc-badge {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 0.3rem;
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: var(--mai-how-orange);
+  }
+
+  .mai-how__qc-thumbs {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .mai-how__qc-thumb {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.3rem;
+    background: #dce3eb;
+    border: 2px solid transparent;
+  }
+
+  .mai-how__qc-thumb.is-active {
+    border-color: var(--mai-how-orange);
+    box-shadow: 0 2px 10px rgba(255, 154, 26, 0.25);
+  }
+
+  .mai-how__qc-list {
+    margin: 0 0 0.75rem;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .mai-how__qc-li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: #475569;
+    line-height: 1.35;
+  }
+
+  .mai-how__qc-li--wait {
+    color: #9a3412;
+    font-weight: 650;
+  }
+
+  .mai-how__qc-ico {
+    flex-shrink: 0;
+    width: 1.1rem;
+    text-align: center;
+    font-weight: 900;
+    color: #16a34a;
+  }
+
+  .mai-how__qc-li--wait .mai-how__qc-ico {
+    color: var(--mai-how-orange);
+  }
+
+  .mai-how__qc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .mai-how__qc-btn {
+    padding: 0.38rem 0.65rem;
+    border-radius: 0.45rem;
+    font-size: 0.68rem;
+    font-weight: 750;
+    background: var(--mai-how-orange);
+    color: #fff;
+  }
+
+  .mai-how__qc-btn--ghost {
+    background: #fff;
+    color: #475569;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+  }
+
+  /* Step 05 — Ship */
+  .mai-how__ship-box {
+    position: relative;
+    height: 5.5rem;
+    border-radius: 0.45rem;
+    background: linear-gradient(165deg, #fef7ec 0%, #fde68a 38%, #fbbf24 100%);
+    border: 2px solid rgba(245, 158, 11, 0.55);
+    margin-bottom: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mai-how__ship-tape {
+    position: absolute;
+    width: 42%;
+    height: 0.55rem;
+    top: 38%;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 2px;
+    transform: rotate(-8deg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .mai-how__ship-tag {
+    position: relative;
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #78350f;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 0.3rem;
+    border: 1px solid rgba(180, 83, 9, 0.25);
+  }
+
+  .mai-how__ship-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .mai-how__ship-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.55rem;
+    border-radius: 0.45rem;
+    border: 2px solid var(--mai-how-orange);
+    background: #fff;
+    margin-bottom: 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #334155;
+  }
+
+  .mai-how__ship-chev {
+    color: var(--mai-how-orange);
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .mai-how__ship-declare {
+    margin-bottom: 0.25rem;
+  }
+
+  .mai-how__ship-input {
+    padding: 0.42rem 0.5rem;
+    border-radius: 0.4rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    background: #f8fafc;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--mai-how-navy);
+  }
+
+  /* Step 06 — Dashboard */
+  .mai-how__dash-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .mai-how__dash-stat {
+    padding: 0.55rem 0.45rem;
+    border-radius: 0.5rem;
+    background: var(--mai-how-card);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    text-align: center;
+  }
+
+  .mai-how__dash-stat--accent {
+    border-color: rgba(255, 154, 26, 0.45);
+    background: rgba(255, 154, 26, 0.1);
+  }
+
+  .mai-how__dash-stat-n {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--mai-how-navy);
+    line-height: 1.15;
+  }
+
+  .mai-how__dash-stat-l {
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .mai-how__dash-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .mai-how__dash-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.5rem;
+    border-radius: 0.45rem;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    font-size: 0.72rem;
+  }
+
+  .mai-how__dash-id {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: #334155;
+  }
+
+  .mai-how__dash-pill {
+    padding: 0.18rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.58rem;
+    font-weight: 800;
+    background: #e8e8ec;
+    color: #475569;
+  }
+
+  .mai-how__dash-pill--prog {
+    background: rgba(59, 130, 246, 0.15);
+    color: #1d4ed8;
+  }
+
+  .mai-how__dash-pill--hot {
+    background: rgba(255, 154, 26, 0.22);
+    color: #9a3412;
+  }
+
+  @media (max-width: 720px) {
+    .mai-how__dash-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mai-how__flow-track {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .mai-how__flow-arrow {
+      width: 2px;
+      height: 1rem;
+      flex-basis: auto;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #cbd5e1, var(--mai-how-orange), #cbd5e1);
+    }
+
+    .mai-how__flow-node {
+      flex-direction: row;
+      justify-content: flex-start;
+      text-align: left;
+      gap: 0.5rem;
+    }
+
+    .mai-how__flow-label {
+      font-size: 0.68rem;
+    }
+
+    .mai-how__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mai-how__nav {
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.45rem;
+      padding-bottom: 0.35rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mai-how__tab {
+      flex: 0 0 min(16rem, 78vw);
+      scroll-snap-align: start;
+    }
+
+    .mai-how__link-col {
+      width: 100%;
+      min-height: auto;
+      padding: 0.25rem 0;
+    }
+
+    .mai-how__link-svg {
+      transform: rotate(90deg);
+      width: 40px;
+      height: 120px;
+    }
+
+    .mai-how__viz-row {
+      flex-direction: column;
+    }
+
+    .mai-how__clipboard {
+      top: 4.5rem;
+      right: 0.65rem;
+    }
+  }
+</style>

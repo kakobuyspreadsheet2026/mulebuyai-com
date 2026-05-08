@@ -1,0 +1,77 @@
+---
+/**
+ * Full-bleed promo strip (matches `MulebuyHomeHero` top banner — mulebuy.com-style rail).
+ */
+import { mulebuyTopBannerHref, mulebuyTopBannerImageUrl } from '../consts';
+import { withMulebuySpreadsheetAlt } from '../lib/withMulebuySpreadsheetAlt';
+
+interface Props {
+  /** Homepage hero: raises LCP priority on the banner image. */
+  highFetchPriority?: boolean;
+  /**
+   * When true (default), banner is hidden at ≤640px (homepage avoids a clipped tall strip; hero/bento carry promos).
+   * Inner layouts should pass false so phones match desktop.
+   */
+  hideOnNarrowScreens?: boolean;
+}
+
+const { highFetchPriority = false, hideOnNarrowScreens = true } = Astro.props;
+---
+
+<div
+  class:list={[
+    'mai-top-banner',
+    { 'mai-top-banner--narrow-visible': !hideOnNarrowScreens },
+  ]}
+  role="region"
+  aria-label="Featured promotion"
+>
+  <a
+    class="mai-top-banner__link"
+    href={mulebuyTopBannerHref}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      class="mai-top-banner__img"
+      src={mulebuyTopBannerImageUrl}
+      alt={withMulebuySpreadsheetAlt(
+        'Mulebuy promotional banner — opens mulebuy.com in a new tab',
+      )}
+      loading="eager"
+      decoding="async"
+      fetchpriority={highFetchPriority ? 'high' : undefined}
+      referrerpolicy="no-referrer"
+    />
+  </a>
+</div>
+
+<style>
+  .mai-top-banner {
+    padding-top: env(safe-area-inset-top, 0px);
+    background: #120c1f;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .mai-top-banner__link {
+    display: block;
+    line-height: 0;
+    outline-offset: 2px;
+  }
+
+  .mai-top-banner__link:focus-visible {
+    outline: 2px solid rgba(167, 139, 250, 0.95);
+  }
+
+  .mai-top-banner__img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .mai-top-banner:not(.mai-top-banner--narrow-visible) {
+      display: none;
+    }
+  }
+</style>

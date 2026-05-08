@@ -1,0 +1,413 @@
+---
+import { withMulebuySpreadsheetAlt } from '../lib/withMulebuySpreadsheetAlt';
+
+export interface RedditSharePick {
+  title: string;
+  summary: string;
+  redditUrl: string;
+  redditLabel: string;
+  addedAt?: string;
+  seoKeywords?: string[];
+  galleryImageUrls?: string[];
+}
+
+interface Props {
+  picks: RedditSharePick[];
+  /** When picks is empty, show a short message (e.g. on the dedicated Buyer shares page). */
+  showEmptyMessage?: boolean;
+  /** `'shipping'` adjusts badge/intro/disclaimer copy for postage-timeline-focused threads. */
+  variant?: 'buyer' | 'shipping';
+}
+
+const { picks, showEmptyMessage = false, variant = 'buyer' } = Astro.props;
+
+const isShipping = variant === 'shipping';
+/** Distinct heading id when buyer + shipping blocks both render */
+const redditHeadingId = isShipping ? 'reddit-share-heading-shipping' : 'reddit-share-heading-buyer';
+
+const t = isShipping
+  ? {
+      carouselLabel: 'Photos for this shipping / haul thread (Reddit excerpt)',
+      prev: 'Previous image',
+      next: 'Next image',
+      dotsLabel: 'Slide',
+      dotLabel: (i: number, n: number) => `Image ${i} of ${n}`,
+      galleryHint: (n: number) =>
+        `Use the side buttons to browse · ${n} photo${n === 1 ? '' : 's'} · full gallery on Reddit`,
+      imgAlt: (title: string, i: number, n: number) => {
+        const head = title.length > 72 ? `${title.slice(0, 69).trimEnd()}…` : title;
+        return `Mulebuy Spreadsheet · Reddit shipping share — ${head} — photo ${i} of ${n}`;
+      },
+      badge: 'Shipping shares · Reddit',
+      intro:
+        'These summaries excerpt Reddit posts from <strong>spreadsheet → Mulebuy shoppers</strong> who document <strong>transit anecdotes, timelines, and freight quirks</strong> after checking out via the agent—not live tariff tables. Courier names, customs luck, and volumetric rounding differ by lane and season; corroborate everything in your Mulebuy dashboard before you budget.',
+      empty: 'No shipping-share write-ups yet. Check back later.',
+    }
+  : {
+      carouselLabel: 'Photos for this story (excerpt from a Reddit thread)',
+      prev: 'Previous image',
+      next: 'Next image',
+      dotsLabel: 'Slide',
+      dotLabel: (i: number, n: number) => `Image ${i} of ${n}`,
+      galleryHint: (n: number) =>
+        `Use the side buttons to browse · ${n} photo${n === 1 ? '' : 's'} · full gallery on Reddit`,
+      imgAlt: (title: string, i: number, n: number) => {
+        const head = title.length > 72 ? `${title.slice(0, 69).trimEnd()}…` : title;
+        return `Mulebuy Spreadsheet · Reddit buyer haul — ${head} — photo ${i} of ${n}`;
+      },
+      badge: 'Buyer shares · Reddit',
+      intro:
+        'Every card carries an <strong>original editorial recap</strong> of Reddit conversations from shoppers who pair <strong>Spreadsheet-indexed browsing</strong> with <strong>Mulebuy checkout</strong>—not a verbatim scrape—with a link back to community threads. Timelines, sizing, fees, and country rules diverge; treat Reddit as colour commentary and Mulebuy as ledger truth.',
+      empty: 'No buyer-share write-ups yet. Check back later.',
+    };
+---
+
+{
+  picks.length ? (
+    <article
+      class:list={['reddit-picks', isShipping && 'reddit-picks--shipping']}
+      aria-labelledby={redditHeadingId}
+    >
+      <div class="reddit-picks-head">
+        <span class="reddit-picks-badge" id={redditHeadingId}>
+          {t.badge}
+        </span>
+      </div>
+      <p class="reddit-picks-intro" set:html={t.intro} />
+      <div class="reddit-picks-stack">
+        {picks.map((item) => (
+          <div class="reddit-pick-card">
+            <h2 class="reddit-pick-title">{item.title}</h2>
+            {item.galleryImageUrls?.length ? (
+              <div
+                class="reddit-gallery"
+                role="region"
+                aria-roledescription="carousel"
+                aria-label={t.carouselLabel}
+                data-reddit-gallery-urls={JSON.stringify(item.galleryImageUrls)}
+                data-share-title={item.title}
+              >
+                <div class="reddit-gallery-viewport">
+                  <img
+                    class="reddit-gallery-img"
+                    src={item.galleryImageUrls[0]}
+                    alt={withMulebuySpreadsheetAlt(
+                      t.imgAlt(item.title, 1, item.galleryImageUrls.length),
+                    )}
+                    width="1080"
+                    height="784"
+                    loading="eager"
+                    decoding="async"
+                    referrerpolicy="no-referrer"
+                  />
+                  <button type="button" class="reddit-gallery-nav reddit-gallery-nav--prev" aria-label={t.prev}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M14 18l-6-6 6-6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.25"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                      </path>
+                    </svg>
+                  </button>
+                  <button type="button" class="reddit-gallery-nav reddit-gallery-nav--next" aria-label={t.next}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M10 6l6 6-6 6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.25"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                      </path>
+                    </svg>
+                  </button>
+                  <div class="reddit-gallery-dots" role="tablist" aria-label={t.dotsLabel}>
+                    {item.galleryImageUrls.map((_, di) => (
+                      <button
+                        type="button"
+                        role="tab"
+                        class:list={['reddit-gallery-dot', di === 0 && 'is-active']}
+                        aria-selected={di === 0}
+                        aria-label={t.dotLabel(di + 1, item.galleryImageUrls!.length)}
+                      >
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p class="reddit-gallery-hint">{t.galleryHint(item.galleryImageUrls.length)}</p>
+              </div>
+            ) : null}
+            <p class="reddit-pick-summary">{item.summary}</p>
+            {item.seoKeywords?.length ? (
+              <p class="reddit-pick-tags">{item.seoKeywords.join(' · ')}</p>
+            ) : null}
+            <p class="reddit-pick-meta">
+              {item.addedAt ? <time datetime={item.addedAt}>{item.addedAt}</time> : null}
+              {item.addedAt ? ' · ' : null}
+              <a href={item.redditUrl} target="_blank" rel="noopener noreferrer nofollow ugc">
+                {item.redditLabel} ↗
+              </a>
+            </p>
+          </div>
+        ))}
+      </div>
+    </article>
+  ) : showEmptyMessage ? (
+    <p class="reddit-picks-intro reddit-picks-intro--solo">{t.empty}</p>
+  ) : null
+}
+
+<style>
+  .reddit-picks-intro--solo {
+    margin: 0;
+    max-width: 52rem;
+  }
+
+  .reddit-picks {
+    margin: 0;
+    padding: 1.35rem 1.25rem 1.5rem;
+    max-width: none;
+    width: 100%;
+    min-width: 0;
+    background: linear-gradient(180deg, #fff7ed 0%, #ffffff 48%);
+    border: 1px solid #fed7aa;
+    border-radius: 0.65rem;
+    border-left: 4px solid #ea580c;
+    text-align: left;
+  }
+
+  .reddit-picks--shipping {
+    background: linear-gradient(180deg, #eff6ff 0%, #ffffff 48%);
+    border-color: #93c5fd;
+    border-left-color: #2563eb;
+  }
+
+  .reddit-picks--shipping .reddit-picks-badge {
+    color: #1e40af;
+    background: #dbeafe;
+  }
+
+  .reddit-picks--shipping .reddit-pick-meta a {
+    color: #1d4ed8;
+  }
+
+  .reddit-picks-head {
+    margin-bottom: 0.65rem;
+  }
+
+  .reddit-picks-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #9a3412;
+    background: #ffedd5;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .reddit-picks-intro {
+    margin: 0 0 1.25rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: none;
+  }
+
+  /* One story per row (full-width cards) — easier to scan; order is newest-first from data */
+  .reddit-picks-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.85rem;
+    width: 100%;
+  }
+
+  /* Phones / very narrow panels */
+  @media (max-width: 560px) {
+    .reddit-picks-stack {
+      gap: 1.5rem;
+    }
+
+    .reddit-picks-stack .reddit-gallery-img {
+      max-height: min(72vh, 26rem);
+    }
+  }
+
+  .reddit-pick-card {
+    padding: 1rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.55rem;
+    min-width: 0;
+  }
+
+  .reddit-pick-title {
+    margin: 0 0 0.6rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.35;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .reddit-gallery {
+    margin: 0 0 1rem;
+    min-width: 0;
+  }
+
+  .reddit-gallery-viewport {
+    position: relative;
+    margin: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #0f0f10;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  }
+
+  .reddit-gallery-img {
+    width: 100%;
+    height: auto;
+    max-height: min(72vh, 26rem);
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    background: #161616;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .reddit-picks-stack .reddit-gallery-img {
+      max-height: min(50vh, 20rem);
+    }
+  }
+
+  .reddit-gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(30, 30, 30, 0.55);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .reddit-gallery-nav:hover {
+    background: rgba(30, 30, 30, 0.75);
+    transform: translateY(-50%) scale(1.06);
+  }
+
+  .reddit-gallery-nav:focus-visible {
+    outline: 2px solid #fdba74;
+    outline-offset: 2px;
+  }
+
+  .reddit-gallery-nav--prev {
+    left: 0.5rem;
+  }
+
+  .reddit-gallery-nav--next {
+    right: 0.5rem;
+  }
+
+  .reddit-gallery-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 0.65rem;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.65rem;
+    margin: 0;
+    border-radius: 999px;
+    background: rgba(22, 22, 22, 0.65);
+    backdrop-filter: blur(4px);
+  }
+
+  .reddit-gallery-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .reddit-gallery-dot:hover {
+    transform: scale(1.25);
+    background: rgba(255, 255, 255, 0.65);
+  }
+
+  .reddit-gallery-dot.is-active,
+  .reddit-gallery-dot[aria-selected='true'] {
+    background: #fff;
+    transform: scale(1.2);
+  }
+
+  .reddit-gallery-dot:focus-visible {
+    outline: 2px solid #fdba74;
+    outline-offset: 2px;
+  }
+
+  .reddit-gallery-hint {
+    margin: 0.45rem 0 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .reddit-pick-summary {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .reddit-pick-tags {
+    margin: 0 0 0.65rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .reddit-pick-meta {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .reddit-pick-meta a {
+    font-weight: 600;
+    color: #c2410c;
+  }
+
+  .reddit-pick-meta a:hover {
+    text-decoration: underline;
+  }
+</style>

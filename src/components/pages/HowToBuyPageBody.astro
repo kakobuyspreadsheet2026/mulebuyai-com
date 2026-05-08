@@ -1,0 +1,259 @@
+---
+import SiteHeader from '../SiteHeader.astro';
+import SiteFooter from '../SiteFooter.astro';
+import type { HowToBuyCopy } from '../../i18n/copy/howToBuy';
+import { getHowToBuyBuyingGuideHtml } from '../../data/howToBuyBuyingGuide.byLocale';
+import { getHowToBuyFaqHtml } from '../../data/howToBuyFaq.byLocale';
+import type { RouteLocale } from '../../i18n/config';
+import { HTML_LANG_BY_ROUTE } from '../../i18n/config';
+
+interface Props {
+  locale: string;
+  copy: HowToBuyCopy;
+  homeHref: string;
+}
+
+const OFFICIAL_BUYING_GUIDE = 'https://mulebuy.com/footer-help/buying-guide';
+const OFFICIAL_HELP_CENTER = 'https://mulebuy.com/help-center';
+
+const { locale, copy, homeHref } = Astro.props;
+
+const buyingGuideBodyHtml = getHowToBuyBuyingGuideHtml(locale);
+const faqHtml = getHowToBuyFaqHtml(locale);
+const contentLang = HTML_LANG_BY_ROUTE[locale as RouteLocale] ?? HTML_LANG_BY_ROUTE.en;
+---
+
+<SiteHeader locale={locale} />
+
+<main>
+  <section class="band-alt">
+    <div class="wrap">
+      <div class="page-mast">
+        <p class="htb-back">
+          <a href={homeHref}>{copy.backHomeLabel}</a>
+        </p>
+        <h1 class="simple-page-title">{copy.h1}</h1>
+        <p class="section-intro htb-intro" set:html={copy.introHtml} />
+
+        <article class="buying-guide-card" aria-labelledby="buying-guide-ribbon-heading">
+          <div class="buying-guide-card-head">
+            <span class="buying-guide-badge" id="buying-guide-ribbon-heading">{copy.guideRibbonBadge}</span>
+            <a
+              class="buying-guide-source-link"
+              href={OFFICIAL_BUYING_GUIDE}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.guideSourceLabel}
+            </a>
+          </div>
+          <p class="buying-guide-note" set:html={copy.guideMirrorNoteHtml} />
+          <div class="buying-guide-html" lang={contentLang} set:html={buyingGuideBodyHtml} />
+        </article>
+
+        <article class="htb-faq-card" aria-labelledby="htb-faq-section-heading">
+          <h2 class="htb-faq-title" id="htb-faq-section-heading">{copy.faqH2}</h2>
+          <div class="buying-guide-card-head">
+            <span class="buying-guide-badge">{copy.faqRibbonBadge}</span>
+            <a
+              class="buying-guide-source-link"
+              href={OFFICIAL_HELP_CENTER}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.faqSourceLabel}
+            </a>
+          </div>
+          <p class="buying-guide-note" set:html={copy.faqMirrorNoteHtml} />
+          <div class="htb-faq-html" lang={contentLang} set:html={faqHtml} />
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<SiteFooter />
+
+<style>
+  .htb-back {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+  .htb-intro {
+    margin-top: 0;
+  }
+
+  .buying-guide-card {
+    margin: 2rem 0 0;
+    padding: 1.35rem 1.25rem 1.5rem;
+    max-width: 52rem;
+    min-width: 0;
+    background: linear-gradient(180deg, var(--hero-surface-2, #f9f9fc) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    border-left: 4px solid var(--accent);
+    text-align: left;
+  }
+
+  .buying-guide-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .buying-guide-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    background: var(--accent-badge-bg);
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .buying-guide-source-link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .buying-guide-note {
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .buying-guide-html {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--muted);
+    min-width: 0;
+  }
+
+  .buying-guide-html :where(h2) {
+    margin: 1.25rem 0 0.65rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  .buying-guide-html :where(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .buying-guide-html :where(p) {
+    margin: 0 0 0.65rem;
+  }
+
+  .buying-guide-html :where(img) {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 0.5rem 0 0.85rem;
+    border-radius: 0.35rem;
+    border: 1px solid var(--border);
+  }
+
+  .htb-faq-card {
+    margin: 2rem 0 0;
+    padding: 1.35rem 1.25rem 1.5rem;
+    max-width: 56rem;
+    min-width: 0;
+    background: linear-gradient(180deg, var(--hero-surface-2, #f9f9fc) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-radius: 0.65rem;
+    border-left: 4px solid var(--accent);
+    text-align: left;
+  }
+
+  .htb-faq-title {
+    margin: 0 0 0.85rem;
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .htb-faq-html {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--muted);
+    min-width: 0;
+  }
+
+  .htb-faq-items {
+    column-count: 1;
+    column-gap: 2.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .htb-faq-items {
+      column-count: 2;
+    }
+  }
+
+  .htb-faq-item {
+    break-inside: avoid;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.12);
+  }
+
+  .htb-faq-item:last-child {
+    border-bottom: none;
+  }
+
+  .htb-faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    padding: 0.15rem 0;
+  }
+
+  .htb-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .htb-faq-item summary::before {
+    content: 'i';
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.55rem;
+    font-weight: 700;
+    font-style: italic;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.125rem;
+    text-align: center;
+    margin-top: 0.2rem;
+  }
+
+  .htb-faq-body {
+    padding: 0.45rem 0 0.35rem 1.65rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .htb-faq-body :where(p) {
+    margin: 0 0 0.45rem;
+  }
+
+  .htb-faq-body :where(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

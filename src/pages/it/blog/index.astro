@@ -1,0 +1,49 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import BlogPageBody from '../../../components/pages/BlogPageBody.astro';
+import blogPosts from '../../../data/blogPosts.json';
+import { canonicalHref, siteStructuredDataIds } from '../../../consts';
+import { getBlogCopy } from '../../../i18n/copy/blogPage';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { breadcrumbListLd, breadcrumbNameFromPageTitle, localeHomePath } from '../../../lib/seo';
+import { HTML_LANG_BY_ROUTE } from '../../../i18n/config';
+
+export const prerender = true;
+
+const locale = 'it';
+const canonicalPath = '/it/blog';
+const copy = getBlogCopy(locale);
+const homeHref = getRelativeLocaleUrl(locale, '');
+
+const origin = Astro.site?.origin ?? 'https://mulebuyai.com';
+const { websiteId } = siteStructuredDataIds(origin);
+const pageUrl = canonicalHref(Astro.site, canonicalPath);
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  '@id': `${pageUrl}#webpage`,
+  name: copy.title,
+  url: pageUrl,
+  description: copy.description,
+  inLanguage: HTML_LANG_BY_ROUTE[locale],
+  isPartOf: { '@id': websiteId },
+};
+
+const breadcrumbLd = breadcrumbListLd(Astro.site, [
+  { name: 'Home', path: localeHomePath(locale) },
+  { name: breadcrumbNameFromPageTitle(copy.title), path: canonicalPath },
+]);
+
+---
+
+<Layout
+  title={copy.title}
+  description={copy.description}
+  canonicalPath={canonicalPath}
+  locale={locale}
+  i18nRouteSegment="blog"
+  jsonLd={[webPageLd, breadcrumbLd]}
+>
+  <BlogPageBody locale={locale} copy={copy} homeHref={homeHref} posts={blogPosts} />
+</Layout>
