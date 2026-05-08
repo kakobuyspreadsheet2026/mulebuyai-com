@@ -11,6 +11,12 @@ export const mlSpreadsheetMulebuySearchTemplate = `${mlSpreadsheetMulebuy.replac
 /** Site branding (aligned with `<meta property="og:site_name">` and JSON-LD). */
 export const siteName = 'Mulebuy Spreadsheet Hub';
 
+/**
+ * Append to favicon URLs in `<head>` whenever `public/favicon.png` / `public/favicon.ico` change.
+ * Browsers and CDNs cache favicons aggressively without this.
+ */
+export const faviconCacheBust = '?v=mulebuy-20260508';
+
 /** Full-width PC top carousel strip — mirrored under `public/images/mulebuy-promo/`. */
 export const mulebuyTopBannerImageUrl = '/images/mulebuy-promo/top-banner.png';
 

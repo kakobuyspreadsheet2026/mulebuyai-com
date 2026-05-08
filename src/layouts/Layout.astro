@@ -18,6 +18,7 @@ import {
   defaultOgImageHeight,
   defaultOgImagePath,
   defaultOgImageWidth,
+  faviconCacheBust,
   mlSpreadsheetMulebuySearchTemplate,
   siteName,
   siteStructuredDataIds,
@@ -208,8 +209,10 @@ const ogAlternates = ROUTE_LOCALES.filter((lc) => lc !== locale && allowedHrefla
       ))
     }
     <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
-    <link rel="icon" href="/favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="shortcut icon" href={`/favicon.ico${faviconCacheBust}`} />
+    <link rel="icon" href={`/favicon.ico${faviconCacheBust}`} sizes="any" />
+    <link rel="icon" href={`/favicon.png${faviconCacheBust}`} type="image/png" sizes="28x28" />
+    <link rel="apple-touch-icon" href={`/favicon.png${faviconCacheBust}`} />
 
     <meta property="og:type" content={ogType} />
     {ogType === 'article' && articlePublishedTime ? (
