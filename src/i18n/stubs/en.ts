@@ -3,8 +3,7 @@ import { mlSpreadsheetMulebuy } from '../../consts';
 import { pillsFor } from './categoryPaths';
 
 export const enHome: HomeStubContent = {
-  title:
-    'Mulebuy Spreadsheet Field Notes — indexed finder, paste-ready links & landed-cost realism | mulebuyai.com',
+  title: 'Mulebuy Spreadsheet',
   description:
     'Mulebuy Spreadsheet field notes: indexed catalogue browsing, clean marketplace URLs for paste-in, QC & freight literacy. Editorial on mulebuyai.com — checkout on mulebuy.com.',
   keywords:
